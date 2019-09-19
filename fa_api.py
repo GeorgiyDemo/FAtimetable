@@ -7,7 +7,7 @@ class GetSettingsClass(object):
         self.get_settings()
 
     def get_settings(self):
-        with open("./settings.yml", 'r') as stream:
+        with open("./settings_dev.yml", 'r') as stream:
             self.config = yaml.safe_load(stream)
 
 class FaClass(object):

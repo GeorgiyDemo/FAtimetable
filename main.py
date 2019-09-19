@@ -3,6 +3,19 @@
 """
 import fa_api
 import datetime
+import requests
+
+class SendSMSClass(object):
+
+    def __init__(self, number, sms):
+        self.number = number
+        self.sms = sms
+        self.send_sms()
+
+    def send_sms(self):
+        
+        r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+self.sms)
+
 
 def get_date_tomorrow():
     
@@ -29,4 +42,4 @@ def main():
     print(tt)
 
 if __name__ == "__main__":
-    main()
+    SendSMSClass("+79999645590","Кошкочасы у Демы ;3")
