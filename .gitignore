@@ -1,2 +1,2 @@
 *.pyc
-settings_dev.yml
+.DS_Store
