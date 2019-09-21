@@ -1,11 +1,13 @@
 """
     Модуль sender, который ловит очередь FIFO с Redis (таблица 3)
+    Запрашивает расписание с финашки и отдаёт на хост
 """
 
 import fa_api
 import requests
 import redis
 import time
+import datetime
 
 class SendSMSClass(object):
 
@@ -40,7 +42,6 @@ class MainProcessingClass():
         self.redis_connect = redis.Redis(host='redis', port=6379, db=1)
         #self.redis_connect.set(id_processing, json.dumps({"status": "waiting"}))
         
-
     def processing(self):
         #Создаём объект
         fa = fa_api.FaClass()
@@ -52,3 +53,6 @@ class MainProcessingClass():
         #Получаем расписание на завтра
         tt = fa.get_timetable_byday(get_date_tomorrow())
         print(tt)
+
+#TODO Авторизация в личном кабинете финашки при первом запуске (??) 
+# ВОЗМОЖНО RQ-WORKER НЕ ДАСТ ТАК СДЕЛАТЬ

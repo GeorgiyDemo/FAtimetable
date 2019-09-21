@@ -11,7 +11,7 @@ import multiprocessing as mp
 from flask import Flask, request
 from flask_restful import Resource, Api
 
-# Подключение для получения результатов обработки документов
+# Подключения к Redis для менеджмента данных
 r_number2group = redis.Redis(host='127.0.0.1', port=6379, db=1) #host = redis
 r_group2id = redis.Redis(host='127.0.0.1', port=6379, db=2) #host = redis
 
@@ -83,14 +83,22 @@ class AddGroup(Resource):
         except:
             return {"status": "exception", "description": "can't set value to group2id table"}
 
+#TODO Статистика/статус сервисов и т.д.
+class Stats(Resource):
+    def get(self):
+        """
+        Метод для получения статистики, ошибок,
+        инфы и т д группы в БД
+        """ 
+        return {"status": "ok","containers":"VSYO NORMALNO"}
 
 api.add_resource(AddNumber, '/add_number')
 api.add_resource(RemoveNumber, '/remove_number')
 api.add_resource(AddGroup, '/add_group')
+api.add_resource(Stats, '/stats')
 
 if __name__ == '__main__':
-    i = 2
-    p = mp.Process(target=async_sender.main, args=(i,))
+    p = mp.Process(target=async_sender.check_send)
     p.start()
     app.run(host='127.0.0.1', debug=False)
     #app.run(host='0.0.0.0', debug=False)
