@@ -1,4 +1,4 @@
-# расписание о парах по SMS
+# Расписание пар ФУ при Правительстве РФ по SMS
 
 ### Таблицы в Redis
 1. Номер телефона -> группа (main)
@@ -13,6 +13,9 @@
 3. Sender принимает данные в очереди, берет данные о расписании с FIN_API и отправляет их на GSM-модуль
 
 ### Общая архитектура
+
+<img src="https://github.com/GeorgiyDemo/FAtimetable/blob/master/other/diagram.png" width="673" height="422">
+
 
 
 ### Учесть

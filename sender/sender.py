@@ -18,7 +18,7 @@ class SendSMSClass(object):
 
     def send_sms(self):
         r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+self.sms)
-        time.sleep(10)
+        time.sleep(30)
 
 def get_date_tomorrow():
     
@@ -49,5 +49,7 @@ class MainProcessingClass():
         tt = fa.get_timetable_byday(get_date_tomorrow())
         print(tt)
 
+
 #TODO Авторизация в личном кабинете финашки при первом запуске (??) 
 # ВОЗМОЖНО RQ-WORKER НЕ ДАСТ ТАК СДЕЛАТЬ
+
