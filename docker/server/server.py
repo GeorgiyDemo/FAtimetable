@@ -45,8 +45,11 @@ class AddNumber(Resource):
             return {"status": "exception", "description": "number is not valid"}
         if UtilClass.check_group(group) == False:
             return {"status": "exception", "description": "group is not valid"}
-        r_number2group.set(number, group)
-        return {"status": "ok"}
+        try:
+            r_number2group.set(number, group)
+            return {"status": "ok"}
+        except:
+            return {"status": "exception", "description": "can't set value to number2group table"}
 
 class RemoveNumber(Resource):
     def get(self):
@@ -69,12 +72,17 @@ class AddGroup(Resource):
         Метод для добавления группы в БД
         
         - Получает имя группы group
-        - Вычисляет id группы
+        - Получает id группы
         - Заносит ассоциацию в БД
         """ 
-        #TODO Метод для добавлния группы
         group = request.args.get('group', '')
-        return {"status": "ok"}
+        group_id = request.args.get('id', '')
+        try:
+            r_group2id.set(group,group_id)
+            return {"status": "ok"}
+        except:
+            return {"status": "exception", "description": "can't set value to group2id table"}
+
 
 api.add_resource(AddNumber, '/add_number')
 api.add_resource(RemoveNumber, '/remove_number')
