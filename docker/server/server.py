@@ -2,10 +2,12 @@
     Flask API для 
 """
 
+import async_sender
+
 import base64
-import json
 import os
 import redis
+import multiprocessing as mp
 from flask import Flask, request
 from flask_restful import Resource, Api
 
@@ -16,8 +18,18 @@ r_group2id = redis.Redis(host='127.0.0.1', port=6379, db=2) #host = redis
 app = Flask(__name__)
 api = Api(app)
 
-#Скорее всего во внешний модуль выкинуть ващ
-#В async проверять, какое время. Если время рассылать сообщения, то рассылаем сообщения
+class UtilClass(object):
+    @staticmethod
+    def check_number(n):
+        if n.startswith("+7") and len(n) == 12:
+            return True
+        return False
+
+    @staticmethod
+    def check_group(g):
+        if r_group2id.exists(g) == True:
+            return True
+        return False
 
 class AddNumber(Resource):
     def get(self):
@@ -27,10 +39,14 @@ class AddNumber(Resource):
         - Получает номер телефона number
         - Получает группу group
         """ 
-        
         number = request.args.get('number', '')
         group = request.args.get('group', '')
-        return {number: group}
+        if UtilClass.check_number(number) == False:
+            return {"status": "exception", "description": "number is not valid"}
+        if UtilClass.check_group(group) == False:
+            return {"status": "exception", "description": "group is not valid"}
+        r_number2group.set(number, group)
+        return {"status": "ok"}
 
 class RemoveNumber(Resource):
     def get(self):
@@ -40,15 +56,19 @@ class RemoveNumber(Resource):
         - Получает номер телефона number
         """ 
         number = request.args.get('number', '')
-        return {"MEOW"}
-        #Работа с FIFO
-        #Работа с Redis
-        #r.set(uuidstr, json.dumps({"status": "in pool"}))
-        #return json.dumps({"status": "exception", "description": "file is not a .pdf file"})
+        if UtilClass.check_number(number) == False:
+            return {"status": "exception", "description": "number is not valid"}
+        if r_number2group.exists(number) == False:
+            return {"status": "exception", "description": "number not exists"}
+        r_number2group.delete(number)
+        return {"status": "ok"}
 
 api.add_resource(AddNumber, '/add_number')
 api.add_resource(RemoveNumber, '/remove_number')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', debug=True)
+    i = 2
+    p = mp.Process(target=async_sender.main, args=(i,))
+    p.start()
+    app.run(host='127.0.0.1', debug=False)
     #app.run(host='0.0.0.0', debug=False)
