@@ -21,6 +21,7 @@ api = Api(app)
 class UtilClass(object):
     @staticmethod
     def check_number(n):
+        print(n)
         if n.startswith("+7") and len(n) == 12:
             return True
         return False

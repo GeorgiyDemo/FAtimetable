@@ -2,6 +2,7 @@
 Модуль для заполнения очереди FIFO в назначенное время
 """
 import time
+import datetime
 import rq
 import redis
 
@@ -18,8 +19,21 @@ def check_send():
     Когда время пришло (#TODO) заносит все данные с таблиц 1,2 в 3
     """
     while True:
-        #Получаем данные с таблиц 1,2 в виде number и group_id
-        pass
-        #Заносим в 3 таблицу
-        queue.enqueue('sender.MainProcessingClass', number, group_id, timeout=1000)
-        time.sleep(10)
+        now_time = datetime.datetime.now()
+        cur_hour = now_time.hour
+        cur_minute = now_time.minute
+
+        #if cur_hour == 7 and cur_minute == 00:
+        keys = r_number2group.keys()
+        print(keys)
+        for k in keys:
+            print(k)
+
+            #Получаем данные с таблиц 1,2 в виде number и group_id
+            #pass
+            #Заносим в 3 таблицу
+            #queue.enqueue('sender.MainProcessingClass', number, group_id, timeout=1000)
+        time.sleep(30)
+
+if __name__ == "__main__":
+    check_send()
