@@ -63,8 +63,22 @@ class RemoveNumber(Resource):
         r_number2group.delete(number)
         return {"status": "ok"}
 
+class AddGroup(Resource):
+    def get(self):
+        """
+        Метод для добавления группы в БД
+        
+        - Получает имя группы group
+        - Вычисляет id группы
+        - Заносит ассоциацию в БД
+        """ 
+        #TODO Метод для добавлния группы
+        group = request.args.get('group', '')
+        return {"status": "ok"}
+
 api.add_resource(AddNumber, '/add_number')
 api.add_resource(RemoveNumber, '/remove_number')
+api.add_resource(AddGroup, '/add_group')
 
 if __name__ == '__main__':
     i = 2
