@@ -12,8 +12,8 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 
 # Подключения к Redis для менеджмента данных
-r_number2group = redis.Redis(host='127.0.0.1', port=6379, db=1) #host = redis
-r_group2id = redis.Redis(host='127.0.0.1', port=6379, db=2) #host = redis
+r_number2group = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=1) #host = redis
+r_group2id = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=2) #host = redis
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,7 +21,6 @@ api = Api(app)
 class UtilClass(object):
     @staticmethod
     def check_number(n):
-        print(n)
         if n.startswith("+7") and len(n) == 12:
             return True
         return False
@@ -33,15 +32,15 @@ class UtilClass(object):
         return False
 
 class AddNumber(Resource):
-    def get(self):
+    def post(self):
         """
         Метод для добавления номера телефона в БД
         
         - Получает номер телефона number
         - Получает группу group
         """ 
-        number = request.args.get('number', '')
-        group = request.args.get('group', '')
+        number = request.form.get('number')
+        group = request.form.get('group')
         if UtilClass.check_number(number) == False:
             return {"status": "exception", "description": "number is not valid"}
         if UtilClass.check_group(group) == False:
@@ -53,13 +52,13 @@ class AddNumber(Resource):
             return {"status": "exception", "description": "can't set value to number2group table"}
 
 class RemoveNumber(Resource):
-    def get(self):
+    def post(self):
         """
         Метод для удаления номера телефона в БД
         
         - Получает номер телефона number
         """ 
-        number = request.args.get('number', '')
+        number = request.form.get('number', '')
         if UtilClass.check_number(number) == False:
             return {"status": "exception", "description": "number is not valid"}
         if r_number2group.exists(number) == False:
@@ -68,7 +67,7 @@ class RemoveNumber(Resource):
         return {"status": "ok"}
 
 class AddGroup(Resource):
-    def get(self):
+    def post(self):
         """
         Метод для добавления группы в БД
         
@@ -76,8 +75,8 @@ class AddGroup(Resource):
         - Получает id группы
         - Заносит ассоциацию в БД
         """ 
-        group = request.args.get('group', '')
-        group_id = request.args.get('id', '')
+        group = request.form.get('group', '')
+        group_id = request.form.get('id', '')
         try:
             r_group2id.set(group,group_id)
             return {"status": "ok"}

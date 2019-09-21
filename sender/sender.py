@@ -17,9 +17,8 @@ class SendSMSClass(object):
         self.send_sms()
 
     def send_sms(self):
-        
         r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+self.sms)
-
+        time.sleep(10)
 
 def get_date_tomorrow():
     
@@ -37,10 +36,6 @@ class MainProcessingClass():
         self.number = number
         self.group_id = group_id
         self.processing()
-       
-        #НАДО ЛИ ?
-        self.redis_connect = redis.Redis(host='redis', port=6379, db=1)
-        #self.redis_connect.set(id_processing, json.dumps({"status": "waiting"}))
         
     def processing(self):
         #Создаём объект
