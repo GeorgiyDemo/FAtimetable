@@ -14,5 +14,5 @@ def main(i):
         time.sleep(10)
         i += 1
     #Получаем данные после Redis везде и потом закидываем в очередь FIFO
-    #queue.enqueue('MainOpenCV.MainProcessingClass', pdf_base64, pdf_name, uuidstr, False, False, timeout=1000)
+    queue.enqueue('sender.MainProcessingClass', number, group_id, timeout=1000)
     pass
