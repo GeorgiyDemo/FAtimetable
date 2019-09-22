@@ -19,20 +19,22 @@ class SendSMSClass(object):
         self.send_sms()
 
     def send_sms(self):
+        print("Отправляем сообщение на "+self.number)
         r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+self.sms)
         time.sleep(30)
 
 class MainProcessingClass():
-    def __init__(self, number, group_id, session_token):
+    def __init__(self, number, group_id, group_name, session_token):
 
         self.session_token = session_token
         self.number = number
         self.group_id = group_id
+        self.group_name = group_name
         self.processing()
         
     def processing(self):
         fa = fa_api.TTClass(self.session_token, self.group_id)
-        obj = fa_json_module.JSONProcessingClass(fa.tt)
+        obj = fa_json_module.JSONProcessingClass(self.group_name, fa.tt)
         #Отправляем по SMS
-        #SendSMSClass(self.number, obj.outstring)
+        SendSMSClass(self.number, obj.outstring)
         

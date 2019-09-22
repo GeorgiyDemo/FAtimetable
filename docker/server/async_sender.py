@@ -76,10 +76,10 @@ def check_send():
             keys = r_number2group.keys()
             for number in keys:
                 #Получаем данные с таблиц 1,2 в виде number и group_id
-                group_id = r_group2id.get(r_number2group.get(number))
+                group_name = r_number2group.get(number)
+                group_id = r_group2id.get(group_name)
                 #Заносим в 3 таблицу
-                queue.enqueue('sender.MainProcessingClass', number, group_id, obj.user_token)
-                time.sleep(10)
+                queue.enqueue('sender.MainProcessingClass', number, group_id, group_name, obj.user_token)
             SEND_FLAG == True
 
         time.sleep(2)
