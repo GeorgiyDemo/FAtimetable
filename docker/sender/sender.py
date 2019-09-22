@@ -2,6 +2,8 @@
     Модуль sender, который ловит очередь FIFO с Redis (таблица 3)
     Запрашивает расписание с финашки и отдаёт на хост
 """
+#Параметр, отвечающий за то сколько ждать времени между отправкой смс разным абонентам
+SMS_WAITING_TIME = 30
 
 import fa_api
 import requests
@@ -27,7 +29,8 @@ class SendSMSClass(object):
             r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+sms)
             print(sms+"\n-> "+r.text)
             time.sleep(1)
-        time.sleep(30)
+        
+        time.sleep(SMS_WAITING_TIME)
 
 class MainProcessingClass():
     def __init__(self, number, group_id, group_name, session_token):
@@ -41,6 +44,4 @@ class MainProcessingClass():
     def processing(self):
         fa = fa_api.TTClass(self.session_token, self.group_id)
         obj = fa_json_module.JSONProcessingClass(self.group_name, fa.tt)
-        #Отправляем по SMS
         SendSMSClass(self.number, obj.outstring)
-        

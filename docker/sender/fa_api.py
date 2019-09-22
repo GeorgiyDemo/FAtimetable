@@ -27,7 +27,7 @@ class TTClass(object):
             "DateBegin" : today.strftime('%d.%m.%Y'),
             "DateEnd" : end_day.strftime('%d.%m.%Y'),
             "JobType" : "GROUP",
-            "GroupId" : self.group_id                #TODO ПЕРЕВОД В INT?
+            "GroupId" : self.group_id
         }
 
         r = session.post('https://portal.fa.ru/Job/SearchAjax', data=data,headers=self.headers)

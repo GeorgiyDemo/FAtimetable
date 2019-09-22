@@ -1,6 +1,10 @@
 """
 Модуль для заполнения очереди FIFO в назначенное время
 """
+#Параметр для задания интервала ожидания после занесения данных в FIFO
+# Меньше 65 не ставить, можно больше
+ASYNC_PROC_TIME_SLEEP = 65
+
 import time
 import datetime
 import rq
@@ -29,6 +33,7 @@ class FATokenClass(object):
     def get_token_site(self):
         session = requests.session()
         session.cookies['ASP.NET_SessionId'] = self.get_cookies_site()
+        
         #Устанавливаем сессию requests с токеном
         self.user_token = session
     
@@ -59,15 +64,16 @@ obj = FATokenClass()
 def check_send():
     """
     Метод, проверяющий какое сейчас время
-    Когда время пришло (#TODO) заносит все данные с таблиц 1,2 в 3
+    Когда время пришло, то заносит все данные с таблиц 1,2 в 3
     """
+
     while True:
         
         now_time = datetime.datetime.now()
         cur_hour = now_time.hour
         cur_minute = now_time.minute
 
-        if cur_hour == 16 and cur_minute == 53:
+        if cur_hour == 17 and cur_minute == 6:
             keys = r_number2group.keys()
             for number in keys:
                 #Получаем данные с таблиц 1,2 в виде number и group_id
@@ -75,6 +81,6 @@ def check_send():
                 group_id = r_group2id.get(group_name)
                 #Заносим в 3 таблицу
                 queue.enqueue('sender.MainProcessingClass', number, group_id, group_name, obj.user_token)
-            time.sleep(120)
+            time.sleep(ASYNC_PROC_TIME_SLEEP)
 
         time.sleep(2)
