@@ -7,17 +7,7 @@ import fa_api
 import requests
 import redis
 import time
-import datetime
 import fa_json_module
-
-def get_date_now():
-    
-    """
-    Метод для получения текущей даты
-    в формате 01.01.2019
-    """
-    today = datetime.date.today()
-    return today.strftime("%d.%m.%Y")
 
 class SendSMSClass(object):
     """
@@ -33,16 +23,16 @@ class SendSMSClass(object):
         time.sleep(30)
 
 class MainProcessingClass():
-    def __init__(self, number, group_id, user_data):
+    def __init__(self, number, group_id, session_token):
 
-        self.user_data = user_data
+        self.session_token = session_token
         self.number = number
         self.group_id = group_id
         self.processing()
         
     def processing(self):
-        fa = fa_api.FaClass(self.user_data, get_date_now())
-        #Возвращаем какой-нибудь объект отсюда
-        fa_json_module.JSONProcessingClass(fa.tt)
-        #
-
+        fa = fa_api.TTClass(self.session_token, self.group_id)
+        obj = fa_json_module.JSONProcessingClass(fa.tt)
+        #Отправляем по SMS
+        #SendSMSClass(self.number, obj.outstring)
+        

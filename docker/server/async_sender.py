@@ -17,37 +17,43 @@ class FATokenClass(object):
     """
     def __init__(self):
         self.headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_0 like Mac OS X)'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
         }
         self.get_settings()
-        self.get_token()
+        self.get_token_site()
 
     def get_settings(self):
         with open("./settings.yml", 'r') as stream:
             self.config = yaml.safe_load(stream)
+
+    def get_token_site(self):
+        session = requests.session()
+        session.cookies['ASP.NET_SessionId'] = self.get_cookies_site()
+        #Устанавливаем сессию requests с токеном
+        self.user_token = session
     
-    def get_token(self):
+    def get_cookies_site(self):
         """
-        Получение токена авторизации по логину и паролю
+        Получение cookies по логину и паролю на сайте ИОП
         """
-        login = self.config["login"]
-        passwd = self.config["password"]
-        raw_data = "Login="+login+"&Pwd="+passwd
-        r = requests.post("https://portal.fa.ru/mCoreAccount/Auth", data=raw_data, headers=self.headers).json()
-        if r["ResultCode"] != -100:
-            self.user_data = (r["Data"]["Token"],r["Data"]["Id"])
+        session = requests.session()
+        response = session.post('https://portal.fa.ru/CoreAccount/LogOn',
+            data={'Login': self.config["login"], 'Pwd': self.config["password"]},
+            headers=self.headers,allow_redirects=True)
+        data = session.cookies['ASP.NET_SessionId']
+        session.close()
+        if response.url == 'https://portal.fa.ru/CoreAccount/Portal':
+            return data
         else:
-            raise Exception("[!] Ошибка авторизации!")
+            raise ValueError('Не могу авторизоваться!')
 
 r_number2group = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=1) #host = redis
 r_group2id = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=2) #host = redis
 
 # Подключение для создания очереди в Redis с помощью python-rq
-queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://127.0.0.1:6379/3')) #redis
-
+queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://127.0.0.1:6379/3')) #127.0.0.1 -> redis
 obj = FATokenClass()
-user_data = obj.user_data
+
 
 #В async проверять, какое время. Если время рассылать сообщения, то рассылаем сообщения
 def check_send():
@@ -62,9 +68,9 @@ def check_send():
 
         if cur_hour == 6 and cur_minute == 40:
             keys = r_number2group.keys()
-            print(keys)
             for number in keys:
                 #Получаем данные с таблиц 1,2 в виде number и group_id
                 group_id = r_group2id.get(r_number2group.get(number))
                 #Заносим в 3 таблицу
-                queue.enqueue('sender.MainProcessingClass', number, group_id, user_data)
+                queue.enqueue('sender.MainProcessingClass', number, group_id, obj.user_token)
+        time.sleep(3)
