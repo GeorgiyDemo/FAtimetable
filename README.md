@@ -17,6 +17,3 @@
 <img src="https://github.com/GeorgiyDemo/FAtimetable/blob/master/other/diagram.png" width="673" height="422">
 
 
-
-### Учесть
-- Если пар нет в этот день, то оповещать не надо!
