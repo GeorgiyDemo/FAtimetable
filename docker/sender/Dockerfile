@@ -15,4 +15,4 @@ WORKDIR /code
 
 RUN pip3 install -r requirements.txt
 
-CMD rq worker opencv-tasks --url redis://redis:6379/3 --exception-handler="RQExceptionHandler.ExceptionWriter"
+CMD rq worker sender-tasks --url redis://redis:6379/3 --exception-handler="RQExceptionHandler.writer"

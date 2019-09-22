@@ -61,16 +61,25 @@ def check_send():
     Метод, проверяющий какое сейчас время
     Когда время пришло (#TODO) заносит все данные с таблиц 1,2 в 3
     """
+    SEND_FLAG = False
     while True:
+        
         now_time = datetime.datetime.now()
         cur_hour = now_time.hour
         cur_minute = now_time.minute
 
-        if cur_hour == 6 and cur_minute == 40:
+        if cur_hour == 0 and cur_minute == 0:
+            SEND_FLAG = False
+
+        if cur_hour == 13 and cur_minute == 9 and SEND_FLAG == False:
+            print("ОГО РАССЫЛКА НАЧАЛАСЬ")
             keys = r_number2group.keys()
             for number in keys:
                 #Получаем данные с таблиц 1,2 в виде number и group_id
                 group_id = r_group2id.get(r_number2group.get(number))
                 #Заносим в 3 таблицу
                 queue.enqueue('sender.MainProcessingClass', number, group_id, obj.user_token)
-        time.sleep(3)
+                time.sleep(10)
+            SEND_FLAG == True
+
+        time.sleep(2)
