@@ -20,7 +20,13 @@ class SendSMSClass(object):
 
     def send_sms(self):
         print("Отправляем сообщение на "+self.number)
-        r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+self.sms)
+        print("Сообщение: "+self.sms)
+        sms_list = self.sms.split("\a")
+        sms_list.pop(-1)
+        for sms in sms_list:
+            r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+sms)
+            print(sms+"\n-> "+r.text)
+            time.sleep(1)
         time.sleep(30)
 
 class MainProcessingClass():
