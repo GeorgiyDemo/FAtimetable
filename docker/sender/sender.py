@@ -8,9 +8,21 @@ import requests
 import redis
 import time
 import datetime
+import fa_json_module
+
+def get_date_now():
+    
+    """
+    Метод для получения текущей даты
+    в формате 01.01.2019
+    """
+    today = datetime.date.today()
+    return today.strftime("%d.%m.%Y")
 
 class SendSMSClass(object):
-
+    """
+    Класс для отправки сообщения на SMS-шлюз
+    """
     def __init__(self, number, sms):
         self.number = number
         self.sms = sms
@@ -20,36 +32,17 @@ class SendSMSClass(object):
         r = requests.get("http://77.37.132.120:5554/SendSMS/user=&password=123456&phoneNumber="+self.number+"&msg="+self.sms)
         time.sleep(30)
 
-def get_date_tomorrow():
-    
-    """
-    Метод для получения завтрашнего дня
-    """
-
-    today = datetime.date.today()
-    future = today + datetime.timedelta(days=1)
-    return future.strftime("%d.%m.%Y")
-
 class MainProcessingClass():
-    def __init__(self, number, group_id):
-       
+    def __init__(self, number, group_id, user_data):
+
+        self.user_data = user_data
         self.number = number
         self.group_id = group_id
         self.processing()
         
     def processing(self):
-        #Создаём объект
-        fa = fa_api.FaClass()
-        
-        #Обращаемся к методу get_group
-        group = fa.get_group()
-        print(group)
-        
-        #Получаем расписание на завтра
-        tt = fa.get_timetable_byday(get_date_tomorrow())
-        print(tt)
-
-
-#TODO Авторизация в личном кабинете финашки при первом запуске (??) 
-# ВОЗМОЖНО RQ-WORKER НЕ ДАСТ ТАК СДЕЛАТЬ
+        fa = fa_api.FaClass(self.user_data, get_date_now())
+        #Возвращаем какой-нибудь объект отсюда
+        fa_json_module.JSONProcessingClass(fa.tt)
+        #
 

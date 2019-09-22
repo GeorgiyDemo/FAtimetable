@@ -8,9 +8,13 @@ import redis
 import yaml
 import requests
 
-#Авторизация в ЛК финашки
 class FATokenClass(object):
+    """
+    Класс для получения токена и id пользователя ИОП 
 
+    - Авторизуется с логином/паролем в settings.yaml
+    - В self.user_data отдаёт tuple с токеном и id пользователя
+    """
     def __init__(self):
         self.headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -34,7 +38,7 @@ class FATokenClass(object):
         if r["ResultCode"] != -100:
             self.user_data = (r["Data"]["Token"],r["Data"]["Id"])
         else:
-            raise Exception("Ошибка авторизации")
+            raise Exception("[!] Ошибка авторизации!")
 
 r_number2group = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=1) #host = redis
 r_group2id = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=2) #host = redis
