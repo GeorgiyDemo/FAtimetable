@@ -44,4 +44,7 @@ class MainProcessingClass():
     def processing(self):
         fa = fa_api.TTClass(self.session_token, self.group_id)
         obj = fa_json_module.JSONProcessingClass(self.group_name, fa.tt)
-        SendSMSClass(self.number, obj.outstring)
+        if obj.outstring != "":
+            SendSMSClass(self.number, obj.outstring)
+        else:
+            print(self.number, self.group_name, "-> пар неть")
