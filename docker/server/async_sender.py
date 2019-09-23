@@ -52,11 +52,11 @@ class FATokenClass(object):
         else:
             raise ValueError('Не могу авторизоваться!')
 
-r_number2group = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=1) #host = redis
-r_group2id = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=2) #host = redis
+r_number2group = redis.Redis(host='redis', port=6379, decode_responses=True, db=1)
+r_group2id = redis.Redis(host='redis', port=6379, decode_responses=True, db=2)
 
 # Подключение для создания очереди в Redis с помощью python-rq
-queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://127.0.0.1:6379/3')) #127.0.0.1 -> redis
+queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://redis:6379/3'))
 obj = FATokenClass()
 
 

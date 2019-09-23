@@ -12,8 +12,8 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 
 # Подключения к Redis для менеджмента данных
-r_number2group = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=1) #host = redis
-r_group2id = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True, db=2) #host = redis
+r_number2group = redis.Redis(host='redis', port=6379, decode_responses=True, db=1)
+r_group2id = redis.Redis(host='redis', port=6379, decode_responses=True, db=2)
 
 app = Flask(__name__)
 api = Api(app)
@@ -100,5 +100,4 @@ api.add_resource(Stats, '/stats')
 if __name__ == '__main__':
     p = mp.Process(target=async_sender.check_send)
     p.start()
-    app.run(host='127.0.0.1', debug=False)
-    #app.run(host='0.0.0.0', debug=False)
+    app.run(host='0.0.0.0', debug=False)
