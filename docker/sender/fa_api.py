@@ -1,7 +1,7 @@
-import requests
-import yaml
-from lxml import html
 import datetime
+
+from lxml import html
+
 
 class TTClass(object):
 
@@ -20,17 +20,17 @@ class TTClass(object):
         """
         session = self.session_token
         today = datetime.datetime.today() + datetime.timedelta(hours=0)
-        end_day = today + datetime.timedelta(days=1, hours=0) 
+        end_day = today + datetime.timedelta(days=1, hours=0)
 
-        data ={
-            "Date" : today,
-            "DateBegin" : today.strftime('%d.%m.%Y'),
-            "DateEnd" : end_day.strftime('%d.%m.%Y'),
-            "JobType" : "GROUP",
-            "GroupId" : self.group_id
+        data = {
+            "Date": today,
+            "DateBegin": today.strftime('%d.%m.%Y'),
+            "DateEnd": end_day.strftime('%d.%m.%Y'),
+            "JobType": "GROUP",
+            "GroupId": self.group_id
         }
 
-        r = session.post('https://portal.fa.ru/Job/SearchAjax', data=data,headers=self.headers)
+        r = session.post('https://portal.fa.ru/Job/SearchAjax', data=data, headers=self.headers)
         self.tt = r.text
 
     def get_json_tt(self):
@@ -56,10 +56,13 @@ class TTClass(object):
                     row.xpath('./td[@data-field="tutors"]/div/div/i/small/text()'))
                 disc['audience'] = ', '.join(
                     [i.strip()[:-1].strip() for i in row.xpath('./td[@data-field="tutors"]/div/div/i/text()') if
-                    i.strip()[:-1] != '']
+                     i.strip()[:-1] != '']
                 ).strip()
-                disc['teachers_id'] = [int(item) for item in row.xpath('./td[@data-field="tutors"]/div/button/@data-id')]
-                disc['teachers_name'] = [item.strip() for item in row.xpath('./td[@data-field="tutors"]/div/button/text()')]
-                disc['groups'] = ', '.join([item.strip() for item in row.xpath('./td[@data-field="groups"]/span/text()')])
+                disc['teachers_id'] = [int(item) for item in
+                                       row.xpath('./td[@data-field="tutors"]/div/button/@data-id')]
+                disc['teachers_name'] = [item.strip() for item in
+                                         row.xpath('./td[@data-field="tutors"]/div/button/text()')]
+                disc['groups'] = ', '.join(
+                    [item.strip() for item in row.xpath('./td[@data-field="groups"]/span/text()')])
                 schedule[current_date].append(disc)
         self.tt = schedule
