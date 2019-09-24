@@ -21,10 +21,12 @@ class JSONProcessingClass(object):
             outstring += day + "\n"
             for i in range(len(tt[day])):
 
-                # Инициалы учителя
-                teacher_name = tt[day][i]["teachers_name"][0].split(" ")
-                new_teacher = teacher_name[0] + " " + teacher_name[1][0] + "." + teacher_name[2][0] + ".,"
-
+                if tt[day][i]["teachers_name"] != [] and tt[day][i]["teachers_id"] != []:
+                    # Инициалы учителя
+                    teacher_name = tt[day][i]["teachers_name"][0].split(" ")
+                    new_teacher = teacher_name[0] + " " + teacher_name[1][0] + "." + teacher_name[2][0] + ".,"
+                else:
+                    new_teacher = ""
                 # TODO Если аудиторий несколько, то учителя не пишем!
                 aud = tt[day][i]["audience"].split(" ")
                 if len(aud) > 1:

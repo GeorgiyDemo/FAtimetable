@@ -58,11 +58,11 @@ class TTClass(object):
                     [i.strip()[:-1].strip() for i in row.xpath('./td[@data-field="tutors"]/div/div/i/text()') if
                      i.strip()[:-1] != '']
                 ).strip())
-                disc['teachers_id'] = str([int(item) for item in
-                                       row.xpath('./td[@data-field="tutors"]/div/button/@data-id')])
-                disc['teachers_name'] = str([item.strip() for item in
-                                         row.xpath('./td[@data-field="tutors"]/div/button/text()')])
+                disc['teachers_id'] = [int(item) for item in
+                                       row.xpath('./td[@data-field="tutors"]/div/button/@data-id')]
+                disc['teachers_name'] = [item.strip() for item in
+                                         row.xpath('./td[@data-field="tutors"]/div/button/text()')]
                 disc['groups'] = str(', '.join(
                     [item.strip() for item in row.xpath('./td[@data-field="groups"]/span/text()')]))
                 schedule[current_date].append(disc)
-        self.tt = schedule
+        self.tt = schedule   
