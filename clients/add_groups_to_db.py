@@ -1,6 +1,8 @@
 """
 Утилита для добавления значений в Redis с yaml через requests
 """
+
+IP_ADDR = "104.248.200.1:5000"
 import requests
 import yaml
 
@@ -30,7 +32,7 @@ def main():
     d = obj.result
 
     for e in d:
-        r = requests.post("http://127.0.0.1:5000/add_group", data={"group": e, "id": d[e]}).json()
+        r = requests.post("http://"+IP_ADDR+"/add_group", data={"group": e, "id": d[e]}).json()
         if r["status"] == "ok":
             print("Успешно добавили " + e + " [" + d[e] + "]")
 

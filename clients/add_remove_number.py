@@ -1,5 +1,5 @@
 import requests
-
+IP_ADDR = "104.248.200.1:5000"
 
 class MainClass(object):
     def __init__(self, flag, number, group):
@@ -15,12 +15,12 @@ class MainClass(object):
 
     def add_number(self):
         print("[Добавление пользователя в систему]")
-        r = requests.post("http://127.0.0.1:5000/add_number", data={"number": self.number, "group": self.group})
+        r = requests.post("http://"+IP_ADDR+"/add_number", data={"number": self.number, "group": self.group})
         print(r.text)
 
     def delete_number(self):
         print("[Удаление пользователя из системы]")
-        r = requests.post("http://127.0.0.1:5000/remove_number", data={"number": self.number})
+        r = requests.post("http://"+IP_ADDR+"/remove_number", data={"number": self.number})
         print(r.text)
 
 
