@@ -7,7 +7,7 @@ def main():
         data_loaded = yaml.safe_load(stream)
     all_tt_dict = data_loaded
     for key in all_tt_dict:
-        print(all_tt_dict[key])
+        #print(all_tt_dict[key])
         obj = fa_json_module.JSONProcessingClass("ТЕСТ",all_tt_dict[key])
         print(obj.outstring)
 

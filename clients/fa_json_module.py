@@ -9,6 +9,13 @@ class JSONProcessingClass(object):
         self.tt = tt
         self.json_decoder()
 
+    def teacher_formater(self, t_string):
+        teacher_list = t_string.split(" ")
+        try:
+            return teacher_list[0] + " " + teacher_list[1][0] + "." + teacher_list[2][0] + ".,"
+        except:
+            return teacher_list[0] + " " + teacher_list[1][0] + ".,"
+
     def json_decoder(self):
 
         # Если нет пар, то присваиваем пустую строку
@@ -23,8 +30,7 @@ class JSONProcessingClass(object):
 
                 if tt[day][i]["teachers_name"] != [] and tt[day][i]["teachers_id"] != []:
                     # Инициалы учителя
-                    teacher_name = tt[day][i]["teachers_name"][0].split(" ")
-                    new_teacher = teacher_name[0] + " " + teacher_name[1][0] + "." + teacher_name[2][0] + ".,"
+                    new_teacher = self.teacher_formater(tt[day][i]["teachers_name"][0])
                 else:
                     new_teacher = ""
                 # TODO Если аудиторий несколько, то учителя не пишем!
