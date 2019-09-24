@@ -18,7 +18,7 @@ class JSONProcessingClass(object):
         outstring = "Расписание группы " + self.group_name + " "
         tt = self.tt
         for day in tt:
-            outstring += day + "\n"
+            outstring += day + "\a"
             for i in range(len(tt[day])):
 
                 if tt[day][i]["teachers_name"] != [] and tt[day][i]["teachers_id"] != []:
@@ -36,14 +36,14 @@ class JSONProcessingClass(object):
                 # Если сообщение слишком длинное, то принудительно сокращаем..
                 addstring = str(i + 1) + ". " + subject + " " + tt[day][i]["time_start"] + "-" + tt[day][i][
                     "time_end"] + \
-                            "\n" + new_teacher + " " + tt[day][i]["audience"] + "\n"
+                            "\a" + new_teacher + " " + tt[day][i]["audience"] + "\a"
 
                 if len(addstring) > 70:
                     while len(addstring) > 70:
                         subject = subject[:len(subject) - 3] + ".."
                         addstring = str(i + 1) + ". " + subject + " " + tt[day][i]["time_start"] + "-" + tt[day][i][
                             "time_end"] + \
-                                    "\n" + new_teacher + " " + tt[day][i]["audience"] + "\n"
+                                    "\a" + new_teacher + " " + tt[day][i]["audience"] + "\a"
 
                 outstring += addstring
         self.outstring = outstring
