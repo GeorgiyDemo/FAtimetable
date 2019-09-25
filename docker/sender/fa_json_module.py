@@ -18,10 +18,6 @@ class JSONProcessingClass(object):
 
     def json_decoder(self):
 
-        # Если нет пар, то присваиваем пустую строку
-        if self.tt == {}:
-            self.outstring = ""
-            return
         outstring = "Расписание группы " + self.group_name + " "
         tt = self.tt
         for day in tt:
