@@ -1,5 +1,5 @@
 """
-    Flask API для 
+    Flask API
 """
 
 import multiprocessing as mp

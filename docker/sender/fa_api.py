@@ -5,10 +5,9 @@ from lxml import html
 
 class TTClass(object):
 
-    def __init__(self, session_token, group_id):
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
-        }
+    def __init__(self, session_token, group_id, config):
+        self.config = config
+        self.headers = self.config["headers"]
         self.session_token = session_token
         self.group_id = group_id
         self.get_text_tt()
@@ -29,7 +28,7 @@ class TTClass(object):
             "GroupId": self.group_id
         }
 
-        r = session.post('https://portal.fa.ru/Job/SearchAjax', data=data, headers=self.headers)
+        r = session.post(self.config["url"]+'/Job/SearchAjax', data=data, headers=self.headers)
         self.tt = r.text
 
     def get_json_tt(self):

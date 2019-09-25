@@ -1,9 +1,6 @@
 """
 Модуль для заполнения очереди FIFO в назначенное время
 """
-# Параметр для задания интервала ожидания после занесения данных в FIFO
-# Меньше 65 не ставить, можно больше
-ASYNC_PROC_TIME_SLEEP = 65
 
 import datetime
 import time
@@ -23,14 +20,12 @@ class FATokenClass(object):
     """
 
     def __init__(self):
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
-        }
         self.get_settings()
+        self.headers = self.config["headers"]
         self.get_token_site()
 
     def get_settings(self):
-        with open("./settings.yml", 'r') as stream:
+        with open("../settings.yml", 'r') as stream:
             self.config = yaml.safe_load(stream)
 
     def get_token_site(self):
@@ -45,15 +40,15 @@ class FATokenClass(object):
         Получение cookies по логину и паролю на сайте ИОП
         """
         session = requests.session()
-        response = session.post('https://portal.fa.ru/CoreAccount/LogOn',
+        response = session.post(self.config['url']+'/CoreAccount/LogOn',
                                 data={'Login': self.config["login"], 'Pwd': self.config["password"]},
                                 headers=self.headers, allow_redirects=True)
         data = session.cookies['ASP.NET_SessionId']
         session.close()
-        if response.url == 'https://portal.fa.ru/CoreAccount/Portal':
+        if response.url == self.config['url']+'/CoreAccount/Portal':
             return data
         else:
-            raise ValueError('Не могу авторизоваться!')
+            raise ValueError('Не могу авторизоваться в ИОП!')
 
 
 r_number2group = redis.Redis(host='redis', port=6379, decode_responses=True, db=1)
@@ -62,7 +57,7 @@ r_group2id = redis.Redis(host='redis', port=6379, decode_responses=True, db=2)
 # Подключение для создания очереди в Redis с помощью python-rq
 queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://redis:6379/3'))
 obj = FATokenClass()
-
+uconfig = obj.config
 
 # В async проверять, какое время. Если время рассылать сообщения, то рассылаем сообщения
 def check_send():
@@ -77,14 +72,15 @@ def check_send():
         cur_hour = now_time.hour
         cur_minute = now_time.minute
 
-        if cur_hour == 7 and cur_minute == 1:
+        #TODO ТУТ КАРОЧ С КОНФИГА БЕРЕМ ЗНАЧЕНИЯ
+        if cur_hour == uconfig["time_send"][0] and cur_minute == uconfig["time_send"][1]:
             keys = r_number2group.keys()
             for number in keys:
                 # Получаем данные с таблиц 1,2 в виде number и group_id
                 group_name = r_number2group.get(number)
                 group_id = r_group2id.get(group_name)
                 # Заносим в 3 таблицу
-                queue.enqueue('sender.MainProcessingClass', number, group_id, group_name, obj.user_token)
-            time.sleep(ASYNC_PROC_TIME_SLEEP)
+                queue.enqueue('sender.MainProcessingClass', number, group_id, group_name, obj.user_token, uconfig)
+            time.sleep(uconfig["ASYNC_PROC_TIME_SLEEP"])
 
         time.sleep(2)
