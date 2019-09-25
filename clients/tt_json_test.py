@@ -7,12 +7,17 @@ def main():
         data_loaded = yaml.safe_load(stream)
     all_tt_dict = data_loaded
     for key in all_tt_dict:
-        time.sleep(1)
-        obj = fa_json_module.JSONProcessingClass("ТЕСТ",all_tt_dict[key])
-        all_list = obj.outstring.split("\a")
-        for e in all_list:
-            print("-"*3)
-            print(e)
+        if all_tt_dict[key] != {}:
+
+            obj = fa_json_module.JSONProcessingClass("ТЕСТ",all_tt_dict[key])
+            all_list = obj.outstring.split("\a")
+            for e in all_list:
+                print("-"*50)
+                print(e)
+            print("*"*50)
+            time.sleep(1)
+        else:
+            print("Неть пар у "+key)
 
 
 if __name__ == "__main__":
