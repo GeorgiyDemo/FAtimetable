@@ -10,6 +10,16 @@ import requests
 import rq
 import yaml
 
+class GetSettingsClass(object):
+    """
+    Класс для чтения настроек с yaml
+    """
+    def __init__(self):
+        self.get_settings()
+    
+    def get_settings(self):
+        with open("./yaml/settings.yml", 'r') as stream:
+            self.config = yaml.safe_load(stream)
 
 class FATokenClass(object):
     """
@@ -19,20 +29,13 @@ class FATokenClass(object):
     - В self.user_data отдаёт tuple с токеном и id пользователя
     """
 
-    def __init__(self):
-        self.get_settings()
-        self.headers = self.config["headers"]
+    def __init__(self, config):
+        self.config = config
         self.get_token_site()
-
-    def get_settings(self):
-        with open("../settings.yml", 'r') as stream:
-            self.config = yaml.safe_load(stream)
 
     def get_token_site(self):
         session = requests.session()
         session.cookies['ASP.NET_SessionId'] = self.get_cookies_site()
-
-        # Устанавливаем сессию requests с токеном
         self.user_token = session
 
     def get_cookies_site(self):
@@ -42,7 +45,7 @@ class FATokenClass(object):
         session = requests.session()
         response = session.post(self.config['url']+'/CoreAccount/LogOn',
                                 data={'Login': self.config["login"], 'Pwd': self.config["password"]},
-                                headers=self.headers, allow_redirects=True)
+                                headers=self.config["headers"], allow_redirects=True)
         data = session.cookies['ASP.NET_SessionId']
         session.close()
         if response.url == self.config['url']+'/CoreAccount/Portal':
@@ -56,8 +59,9 @@ r_group2id = redis.Redis(host='redis', port=6379, decode_responses=True, db=2)
 
 # Подключение для создания очереди в Redis с помощью python-rq
 queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://redis:6379/3'))
-obj = FATokenClass()
-uconfig = obj.config
+
+s_obj = GetSettingsClass()
+uconfig = s_obj.config
 
 # В async проверять, какое время. Если время рассылать сообщения, то рассылаем сообщения
 def check_send():
@@ -74,6 +78,7 @@ def check_send():
 
         #TODO ТУТ КАРОЧ С КОНФИГА БЕРЕМ ЗНАЧЕНИЯ
         if cur_hour == uconfig["time_send"][0] and cur_minute == uconfig["time_send"][1]:
+            obj = FATokenClass(uconfig)
             keys = r_number2group.keys()
             for number in keys:
                 # Получаем данные с таблиц 1,2 в виде number и group_id

@@ -1,4 +1,4 @@
 *.pyc
 .DS_Store
-*.yml
 .idea
+docker/yaml/settings.yml
