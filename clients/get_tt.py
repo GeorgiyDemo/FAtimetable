@@ -129,6 +129,13 @@ def main():
     #Словарь с группами
     GROUP_DICT = obj.result
 
+    group_id = GROUP_DICT["ПИ19-4"]
+    fa = TTClass(login_obj.user_token, group_id)
+    UNIVERSAL_DICT[group_id] = fa.tt
+    with open("tt.yml", 'w') as outfile:
+        yaml.safe_dump(UNIVERSAL_DICT, outfile, default_flow_style=False, allow_unicode=True)
+    return
+    """
     for e in GROUP_DICT:
         time.sleep(1)
         GROUP_ID = GROUP_DICT[e]
@@ -138,7 +145,7 @@ def main():
         UNIVERSAL_DICT[GROUP_ID]= fa.tt
         with open("tt.yml", 'w') as outfile:
             yaml.safe_dump(UNIVERSAL_DICT, outfile, default_flow_style=False, allow_unicode=True)
-
+    """
 
     
 if __name__ == "__main__":
