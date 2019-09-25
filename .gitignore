@@ -2,3 +2,5 @@
 .DS_Store
 .idea
 docker/yaml/settings.yml
+clients/redis_test.py
+clients/OUT_SET.yml
