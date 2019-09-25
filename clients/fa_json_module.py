@@ -42,14 +42,14 @@ class JSONProcessingClass(object):
                 # Если сообщение слишком длинное, то принудительно сокращаем..
                 addstring = str(i + 1) + ". " + subject + " " + tt[day][i]["time_start"] + "-" + tt[day][i][
                     "time_end"] + \
-                            "\a" + new_teacher + " " + tt[day][i]["audience"] + "\a"
+                            "\n" + new_teacher + " " + tt[day][i]["audience"] + "\a"
 
                 if len(addstring) > 70:
                     while len(addstring) > 70:
                         subject = subject[:len(subject) - 3] + ".."
                         addstring = str(i + 1) + ". " + subject + " " + tt[day][i]["time_start"] + "-" + tt[day][i][
                             "time_end"] + \
-                                    "\a" + new_teacher + " " + tt[day][i]["audience"] + "\a"
+                                    "\n" + new_teacher + " " + tt[day][i]["audience"] + "\a"
 
                 outstring += addstring
         self.outstring = outstring
