@@ -4,8 +4,6 @@ import time
 import yaml
 from lxml import html
 
-YAML_FILE = "groups.yml"
-
 class YamlClass(object):
     def __init__(self, d):
         self.d = d
@@ -14,13 +12,13 @@ class YamlClass(object):
 
     def y_get(self):
         # Чтение из файла
-        with open(YAML_FILE, 'r') as stream:
+        with open("groups.yml", 'r') as stream:
             data_loaded = yaml.safe_load(stream)
         self.result = data_loaded
 
     def y_set(self):
         # Запись в файл
-        with open(YAML_FILE, 'w') as outfile:
+        with open("groups.yml", 'w') as outfile:
             yaml.safe_dump(self.d, outfile, default_flow_style=False, allow_unicode=True)
 
 class FATokenClass(object):
@@ -76,12 +74,11 @@ class TTClass(object):
         """
         session = self.session_token
         today = datetime.datetime.today() + datetime.timedelta(hours=0)
-        end_day = today + datetime.timedelta(days=1, hours=0)
 
         data = {
             "Date": today,
             "DateBegin": today.strftime('%d.%m.%Y'),
-            "DateEnd": end_day.strftime('%d.%m.%Y'),
+            "DateEnd": today.strftime('%d.%m.%Y'),
             "JobType": "GROUP",
             "GroupId": self.group_id
         }
@@ -133,6 +130,7 @@ def main():
     GROUP_DICT = obj.result
 
     for e in GROUP_DICT:
+        time.sleep(1)
         GROUP_ID = GROUP_DICT[e]
         fa = TTClass(login_obj.user_token, GROUP_ID)
         print("Расписание",e,GROUP_DICT[e])

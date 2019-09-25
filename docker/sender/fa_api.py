@@ -20,12 +20,11 @@ class TTClass(object):
         """
         session = self.session_token
         today = datetime.datetime.today() + datetime.timedelta(hours=0)
-        end_day = today + datetime.timedelta(days=1, hours=0)
 
         data = {
             "Date": today,
             "DateBegin": today.strftime('%d.%m.%Y'),
-            "DateEnd": end_day.strftime('%d.%m.%Y'),
+            "DateEnd": today.strftime('%d.%m.%Y'),
             "JobType": "GROUP",
             "GroupId": self.group_id
         }
