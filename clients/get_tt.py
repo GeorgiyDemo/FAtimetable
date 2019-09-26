@@ -29,10 +29,8 @@ class FATokenClass(object):
     - В self.user_data отдаёт tuple с токеном и id пользователя
     """
 
-    def __init__(self):
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
-        }
+    def __init__(self, config):
+        self.headers = config["headers"]
         self.get_token_site()
 
     def get_token_site(self):
@@ -59,10 +57,8 @@ class FATokenClass(object):
 
 class TTClass(object):
 
-    def __init__(self, session_token, group_id):
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
-        }
+    def __init__(self, session_token, group_id, config):
+        self.headers = config["headers"]
         self.session_token = session_token
         self.group_id = group_id
         self.get_text_tt()
@@ -124,13 +120,18 @@ def main():
 
     UNIVERSAL_DICT = {}
 
-    login_obj = FATokenClass()
+
+    with open("OUT_SET.yml", 'r') as stream:
+            config = yaml.safe_load(stream)
+    
+    login_obj = FATokenClass(config)
     obj = YamlClass("")
     #Словарь с группами
     GROUP_DICT = obj.result
 
     group_id = GROUP_DICT["ПИ19-4"]
-    fa = TTClass(login_obj.user_token, group_id)
+    fa = TTClass(login_obj.user_token, group_id, config)
+    print(fa.tt)
     UNIVERSAL_DICT[group_id] = fa.tt
     with open("tt.yml", 'w') as outfile:
         yaml.safe_dump(UNIVERSAL_DICT, outfile, default_flow_style=False, allow_unicode=True)
