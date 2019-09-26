@@ -42,6 +42,7 @@ class FATokenClass(object):
         """
         Получение cookies по логину и паролю на сайте ИОП
         """
+        print("get_cookies_site headers:",self.config["headers"])
         session = requests.session()
         response = session.post(self.config['url']+'/CoreAccount/LogOn',
                                 data={'Login': self.config["login"], 'Pwd': self.config["password"]},

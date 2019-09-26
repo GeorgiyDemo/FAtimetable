@@ -7,7 +7,6 @@ class TTClass(object):
 
     def __init__(self, session_token, group_id, config):
         self.config = config
-        self.headers = self.config["headers"]
         self.session_token = session_token
         self.group_id = group_id
         self.get_text_tt()
@@ -17,6 +16,7 @@ class TTClass(object):
         """
         Метод для получения расписания в виде текста
         """
+        print("get_text_tt headers:", self.config["headers"])
         session = self.session_token
         today = datetime.datetime.today() + datetime.timedelta(hours=0)
 
@@ -28,7 +28,7 @@ class TTClass(object):
             "GroupId": self.group_id
         }
 
-        r = session.post(self.config["url"]+'/Job/SearchAjax', data=data, headers=self.headers)
+        r = session.post(self.config["url"]+'/Job/SearchAjax', data=data, headers=self.config["headers"])
         self.tt = r.text
 
     def get_json_tt(self):
