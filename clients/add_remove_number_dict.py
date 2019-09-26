@@ -1,3 +1,8 @@
+import requests
+import time
+
+IP_ADDR = "157.245.54.111:5000"
+
 meow = [
 "+79884653244",
 "+79100092638",
@@ -25,5 +30,12 @@ meow = [
 "+79615447737",
 "+79067045692"]
 
+def add_number(number, group):
+    print(number, group)
+    print("[Добавление пользователя в систему]")
+    r = requests.post("http://"+IP_ADDR+"/add_number", data={"number": number, "group": group})
+    print(r.text)
+
 for phone in meow:
-    print(phone)
+    add_number(phone,"ПИ19-1")
+    time.sleep(1)
