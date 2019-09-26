@@ -51,7 +51,7 @@ class FATokenClass(object):
         if response.url == self.config['url']+'/CoreAccount/Portal':
             return data
         else:
-            raise ValueError('Не могу авторизоваться в ИОП!')
+            raise Exception("Can't login into IOP", data)
 
 
 r_number2group = redis.Redis(host='redis', port=6379, decode_responses=True, db=1)

@@ -26,9 +26,11 @@ class SendSMSClass(object):
         sms_list = self.sms.split("\a")
         sms_list.pop(-1)
         for sms in sms_list:
-            r = requests.get(
+            try:
+                requests.get(
                 "http://"+self.config["gsm_url"]+"/SendSMS/user=&password="+self.config["gsm_password"]+"&phoneNumber=" + self.number + "&msg=" + sms)
-            print(sms + "\n-> " + r.text)
+            except:
+                raise Exception('GSM server', 'GSM server exception')
             time.sleep(1)
 
         time.sleep(self.config["SMS_TIME_SLEEP"])

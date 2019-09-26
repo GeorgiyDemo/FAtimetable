@@ -27,9 +27,12 @@ class TTClass(object):
             "JobType": "GROUP",
             "GroupId": self.group_id
         }
-
-        r = session.post(self.config["url"]+'/Job/SearchAjax', data=data, headers=self.config["headers"])
-        self.tt = r.text
+        try:
+            r = session.post(self.config["url"]+'/Job/SearchAjax', data=data, headers=self.config["headers"])
+            self.tt = r.text
+        except:
+            raise Exception("Can't get timetable", data)
+        
 
     def get_json_tt(self):
         """
