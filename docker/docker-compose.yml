@@ -27,6 +27,14 @@ services:
     ports:
      - "5000:5000"
     restart: on-failure
+  
+  dashboard:
+    build: dashboard/.
+    depends_on:
+      - redis
+    ports:
+    - "9181:9181"
+    restart: on-failure
 
 volumes:
   redis_data:
