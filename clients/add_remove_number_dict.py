@@ -38,4 +38,3 @@ def add_number(number, group):
 
 for phone in meow:
     add_number(phone,"ПИ19-1")
-    time.sleep(1)
