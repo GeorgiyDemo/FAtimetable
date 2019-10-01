@@ -10,5 +10,5 @@ time_send:                     #Час и минута отправки SMS в t
 - 7                            #Час
 - 1                            #Минута
 url: CHECK
-
+telegram_token: CHECK
 

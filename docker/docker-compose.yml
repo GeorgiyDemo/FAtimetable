@@ -28,6 +28,13 @@ services:
      - "5000:5000"
     restart: on-failure
   
+  telegram-cli:
+    build: telegram-cli/.
+    depends_on:
+      - server
+    volumes:
+      - ./yaml/:/app/yaml/
+  
   dashboard:
     build: dashboard/.
     depends_on:
