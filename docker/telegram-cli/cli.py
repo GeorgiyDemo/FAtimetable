@@ -7,64 +7,89 @@ import time
 import yaml
 from telegram.error import NetworkError, Unauthorized
 
-update_id = None
+class GetSettingsClass(object):
+    """
+    Класс для чтения настроек с yaml
+    """
+    def __init__(self):
+        self.get_settings()
+    
+    def get_settings(self):
+        with open("./settings.yml", 'r') as stream:
+            self.c = yaml.safe_load(stream)
 
+class TelegramCli(object):
+
+    def __init__(self, token, admin_list):
+        """Запуск бота"""
+        self.update_id = None
+        self.bot = telegram.Bot(token)
+        self.admin_list = admin_list
+        try:
+            self.update_id = self.bot.get_updates()[0].update_id
+        except IndexError:
+            self.update_id = None
+
+        while True:
+            try:
+                self.handler()
+            except NetworkError:
+                time.sleep(1)
+            except Unauthorized:
+                self.update_id += 1
+
+    def check_admin(self, id):
+        if int(id) in self.admin_list:
+            return True
+        return False
+
+    def handler(self):
+        p_mode = telegram.ParseMode.HTML
+        for update in self.bot.get_updates(offset=self.update_id, timeout=10):
+            self.update_id = update.update_id + 1
+            
+            tg_userid = str(update.message["chat"]["id"])
+
+            if update.message.text == "/start":
+                if self.check_admin(tg_userid) == True:
+                    update.message.reply_text(
+                        "Привет, ты авторизирован в системе с userid "+tg_userid,
+                        parse_mode=p_mode)
+                else:
+                    update.message.reply_text(
+                        "Нет доступа к админке!\n Для получния доступа обратись к методу /userid и отправить результат @Georgiy_D",
+                        parse_mode=p_mode)
+
+            elif update.message.text == "/userid":
+                update.message.reply_text(
+                    "Ваш userid в Telegram:\n<b>"+tg_userid+"</b>",
+                    parse_mode=p_mode)
+                
+            elif update.message.text.split(" ")[0] == "/add" and self.check_admin(tg_userid) == True:
+                
+                args_list = update.message.text.split(" ")
+                if len(args_list) != 3:
+                    update.message.reply_text(
+                        "Что-то пошло не так\nОбщий синтаксис команды:\n<b>/add номер_телефона группа</b>",
+                        parse_mode=p_mode)
+                
+                else:
+                    phone_number = args_list[1]
+                    group = args_list[2]
+                    update.message.reply_text(
+                        "*Добавление номера телефона в систему*\nНомер телефона: <b>"+phone_number+"</b>\nГруппа: <b>"+group+"</b>",
+                        parse_mode=p_mode)
+            
+            elif update.message.text.split(" ")[0] == "/remove" and self.check_admin(tg_userid) == True:
+                update.message.reply_text(
+                        "*Обратились к методу remove*",
+                        parse_mode=p_mode)
+                
 
 
 def main():
-    """Запуск бота"""
-    global update_id
-    with open("./settings.yml", 'r') as stream:
-        d = yaml.load(stream)
-    token = d["telegram_token"]
-    bot = telegram.Bot(token)
-    try:
-        update_id = bot.get_updates()[0].update_id
-    except IndexError:
-        update_id = None
-
-    while True:
-        try:
-            handler(bot)
-        except NetworkError:
-            time.sleep(1)
-        except Unauthorized:
-            update_id += 1
-
-
-def handler(bot):
-    global update_id
-    p_mode = telegram.ParseMode.HTML
-    for update in bot.get_updates(offset=update_id, timeout=10):
-        update_id = update.update_id + 1
-        
-        if update.message.text == "/start" : #AND ЕСТЬ В USER_ID ADMIN
-            print(update.message)
-            update.message.reply_text(
-                "Привет 🐾\nЯ помогу тебе следить за конкурсом в списке предзачисления на сайте fa.ru\nДля активации введи команду вида\n<b>/set фамилия имя отчество</b>",
-                parse_mode=p_mode)
-
-        if update.message.text == "/userid":
-            tg_userid = str(update.message["chat"]["id"])
-            update.message.reply_text(
-                "Ваш userid в Telegram:\n<b>"+tg_userid+"</b>",
-                parse_mode=p_mode)
-            
-        elif update.message.text.split(" ")[0] == "/add":
-            
-            args_list = update.message.text.split(" ")
-            args_list
-            # Чтоб ФИО было полное
-            if len(args_list) != 4:
-                update.message.reply_text(
-                    "Что-то пошло не так\nОбщий синтаксис команды:\n<b>/add номер_телефона группа</b>",
-                    parse_mode=p_mode)
-            
-            else:
-                 update.message.reply_text(
-                    "Ты есть в списках, успешно добавил тебя в систему 😌\nТеперь ты будешь получать уведомления при изменении",
-                    parse_mode=p_mode)
-
+    obj = GetSettingsClass()
+    TelegramCli(obj.c["telegram_token"], obj.c["telegram_admins"])
 
 if __name__ == '__main__':
     main()

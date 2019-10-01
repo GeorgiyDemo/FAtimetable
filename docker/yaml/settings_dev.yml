@@ -11,4 +11,7 @@ time_send:                     #Час и минута отправки SMS в t
 - 1                            #Минута
 url: CHECK
 telegram_token: CHECK
+telegram_admins:
+- 111111
+- 222222
 
