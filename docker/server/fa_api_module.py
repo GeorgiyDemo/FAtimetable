@@ -17,12 +17,12 @@ class TTClass(object):
         Метод для получения расписания в виде текста
         """
         session = self.session_token
-        today = datetime.datetime.today() + datetime.timedelta(hours=0)
+        next_day = datetime.datetime.today() + datetime.timedelta(hours=0) + datetime.timedelta(days=1)
 
         data = {
-            "Date": today,
-            "DateBegin": today.strftime('%d.%m.%Y'),
-            "DateEnd": today.strftime('%d.%m.%Y'),
+            "Date": next_day,
+            "DateBegin": next_day.strftime('%d.%m.%Y'),
+            "DateEnd": next_day.strftime('%d.%m.%Y'),
             "JobType": "GROUP",
             "GroupId": self.group_id
         }
