@@ -2,7 +2,7 @@
 Утилита для добавления значений в Redis с yaml через requests
 """
 
-IP_ADDR = "157.245.54.111:5000"
+IP_ADDR = "127.0.0.1:5000"
 
 import requests
 import yaml
