@@ -7,7 +7,7 @@ import time
 import yaml
 from telegram.error import NetworkError, Unauthorized
 
-IP_ADDR = "127.0.0.1:5000"
+IP_ADDR = "server:5000"
 
 class GetSettingsClass(object):
     """
@@ -17,13 +17,20 @@ class GetSettingsClass(object):
         self.get_settings()
     
     def get_settings(self):
-        with open("./settings.yml", 'r') as stream:
+        with open("./yaml/settings.yml", 'r') as stream:
             self.c = yaml.safe_load(stream)
 
 class TelegramCli(object):
 
     def __init__(self, token, admin_list):
-        """Запуск бота"""
+        
+        """
+        Запуск бота
+        """
+        
+        self.d_flag = {}
+        self.d_data = {}
+
         self.update_id = None
         self.bot = telegram.Bot(token)
         self.admin_list = admin_list
@@ -82,18 +89,51 @@ class TelegramCli(object):
                         "*Добавление номера телефона в систему*\nНомер телефона: <b>"+phone_number+"</b>\nГруппа: <b>"+group+"</b>",
                         parse_mode=p_mode)
                     r = requests.post("http://"+IP_ADDR+"/add_number", data={"number": phone_number, "group": group}).json()
+                    
                     if r["status"] == "ok":
                         update.message.reply_text("Успешное добавление пользователя")
+
                     elif r["exist"] == 1:
-                        update.message.reply_text("Номер существует в БД, перезаписываем?")
-                        if "ДА":
-                            r.post()
-                            update.message.reply_text("Успешное добавление пользователя")
-                        else:
-                            print("ПОФИГ")
+
+                        keyboard = [
+                            ['Да', 'Нет'], 
+                        ]
+                        self.d_flag[tg_userid] = -1
+                        self.d_data[tg_userid] = {"number" : phone_number, "group" : group}
+                        reply_markup = telegram.ReplyKeyboardMarkup(keyboard)
+                        self.bot.send_message(chat_id=tg_userid, 
+                                        text="Номер существует в БД, перезаписываем?", 
+                                        reply_markup=reply_markup)
+
                     else:
                         update.message.reply_text("Ошибка при добавлении пользователя!\nОписание: "+r["description"])
             
+            elif (update.message.text == "Да") and (tg_userid in self.d_flag) and (self.d_flag[tg_userid] == -1):
+                
+                input_number = self.d_data[tg_userid]["number"]
+                input_group = self.d_data[tg_userid]["group"]
+                data = {
+                    "number": input_number, 
+                    "group": input_group, 
+                    "rewrite": True,
+                }
+                r = requests.post("http://"+IP_ADDR+"/add_number",data=data).json()
+                del self.d_data[tg_userid]
+                self.d_flag[tg_userid] = 1
+                reply_markup = telegram.ReplyKeyboardRemove()
+                if r["status"] == "ok":
+                    self.bot.send_message(chat_id=tg_userid, text="Успешная перезапись пользователя "+input_number+" в группу "+input_group,
+                    reply_markup=reply_markup)
+                else:
+                    self.bot.send_message(chat_id=tg_userid, text="Что-то совсем всё плохо\nПиши @Georgiy_D и рассказывай как ты дошёл до такой жизни",
+                    reply_markup=reply_markup)
+
+            elif (update.message.text == "Нет") and (tg_userid in self.d_flag) and (self.d_flag[tg_userid] == -1):
+                del self.d_data[tg_userid]
+                reply_markup = telegram.ReplyKeyboardRemove()
+                self.bot.send_message(chat_id=tg_userid, text="На нет и суда нет, хих", reply_markup=reply_markup)
+                self.d_flag[tg_userid] = 0
+
             elif update.message.text.split(" ")[0] == "/remove" and self.check_admin(tg_userid) == True:
                 args_list = update.message.text.split(" ")
                 if len(args_list) != 2:
