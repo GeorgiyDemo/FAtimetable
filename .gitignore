@@ -2,6 +2,5 @@
 .DS_Store
 .idea
 docker/yaml/settings.yml
-clients/redis_test.py
-clients/OUT_SET.yml
-docker/telegram-cli/settings.yml
+utils/redis_test.py
+utils/OUT_SET.yml
