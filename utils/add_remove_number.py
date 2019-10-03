@@ -1,5 +1,5 @@
 import requests
-IP_ADDR = "40.117.90.200:5000"
+IP_ADDR = "127.0.0.1:5000"
 
 class MainClass(object):
     def __init__(self, flag, number, group):

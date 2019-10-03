@@ -4,11 +4,7 @@
 """
 
 import time
-
-import fa_api
-import fa_json_module
 import requests
-
 
 class SendSMSClass(object):
     """
@@ -17,8 +13,8 @@ class SendSMSClass(object):
 
     def __init__(self, number, sms, config):
         self.number = number
-        self.config = config
         self.sms = sms
+        self.config = config
         self.send_sms()
 
     def send_sms(self):
@@ -36,20 +32,3 @@ class SendSMSClass(object):
         time.sleep(self.config["SMS_TIME_SLEEP"])
 
 
-class MainProcessingClass():
-    def __init__(self, number, group_id, group_name, session_token, config):
-
-        self.config = config
-        self.session_token = session_token
-        self.number = number
-        self.group_id = group_id
-        self.group_name = group_name
-        self.processing()
-
-    def processing(self):
-        fa = fa_api.TTClass(self.session_token, self.group_id, self.config)
-        if fa.tt != {}:
-            obj = fa_json_module.JSONProcessingClass(self.group_name, fa.tt)
-            SendSMSClass(self.number, obj.outstring, self.config)
-        else:
-            print(self.number, self.group_name, "-> пар неть")
