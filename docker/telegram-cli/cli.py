@@ -62,7 +62,7 @@ class TelegramCli(object):
             if update.message.text == "/start":
                 if self.check_admin(tg_userid) == True:
                     update.message.reply_text(
-                        "Привет, ты авторизирован в системе с userid "+tg_userid+"\nДоступные команды:\n/add - добавление нового пользователя\n/remove - удаление пользователя",
+                        "Привет, ты авторизован в системе с userid "+tg_userid+"\nДоступные команды:\n/add - добавление нового пользователя\n/remove - удаление пользователя",
                         parse_mode=p_mode)
                 else:
                     update.message.reply_text(
