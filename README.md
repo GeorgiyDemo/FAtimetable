@@ -14,7 +14,7 @@
 
 ### Общая архитектура
 
-<img src="https://github.com/GeorgiyDemo/FAtimetable/blob/master/other/diagram.png" width="673" height="422">
+<img src="https://github.com/GeorgiyDemo/FAtimetable/blob/master/other/diagram.png" width="601" height="500">
 
 ### Особенности развёртки
 После развёртки необходимо применить команду для фикса прав на папку и файл Redis:
