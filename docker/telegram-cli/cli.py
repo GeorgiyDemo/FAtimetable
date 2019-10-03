@@ -7,6 +7,8 @@ import time
 import yaml
 from telegram.error import NetworkError, Unauthorized
 
+IP_ADDR = "127.0.0.1:5000"
+
 class GetSettingsClass(object):
     """
     Класс для чтения настроек с yaml
@@ -53,11 +55,11 @@ class TelegramCli(object):
             if update.message.text == "/start":
                 if self.check_admin(tg_userid) == True:
                     update.message.reply_text(
-                        "Привет, ты авторизирован в системе с userid "+tg_userid,
+                        "Привет, ты авторизирован в системе с userid "+tg_userid+"\nДоступные команды:\n/add - добавление нового пользователя\n/remove - удаление пользователя",
                         parse_mode=p_mode)
                 else:
                     update.message.reply_text(
-                        "Нет доступа к админке!\n Для получния доступа обратись к методу /userid и отправить результат @Georgiy_D",
+                        "Нет доступа к админке!\n Для получния доступа обратись к методу /userid и отправь результат @Georgiy_D",
                         parse_mode=p_mode)
 
             elif update.message.text == "/userid":
@@ -79,13 +81,35 @@ class TelegramCli(object):
                     update.message.reply_text(
                         "*Добавление номера телефона в систему*\nНомер телефона: <b>"+phone_number+"</b>\nГруппа: <b>"+group+"</b>",
                         parse_mode=p_mode)
+                    r = requests.post("http://"+IP_ADDR+"/add_number", data={"number": phone_number, "group": group}).json()
+                    if r["status"] == "ok":
+                        update.message.reply_text("Успешное добавление пользователя")
+                    elif r["exist"] == 1:
+                        update.message.reply_text("Номер существует в БД, перезаписываем?")
+                        if "ДА":
+                            r.post()
+                            update.message.reply_text("Успешное добавление пользователя")
+                        else:
+                            print("ПОФИГ")
+                    else:
+                        update.message.reply_text("Ошибка при добавлении пользователя!\nОписание: "+r["description"])
             
             elif update.message.text.split(" ")[0] == "/remove" and self.check_admin(tg_userid) == True:
-                update.message.reply_text(
-                        "*Обратились к методу remove*",
+                args_list = update.message.text.split(" ")
+                if len(args_list) != 2:
+                    update.message.reply_text(
+                        "Что-то пошло не так\nОбщий синтаксис команды:\n<b>/remove номер_телефона</b>",
                         parse_mode=p_mode)
-                
-
+                else:
+                    phone_number = args_list[1]
+                    update.message.reply_text(
+                        "*Удаление пользователя из системы*\nНомер телефона: <b>"+phone_number+"</b>",
+                        parse_mode=p_mode)
+                    r = requests.post("http://"+IP_ADDR+"/remove_number", data={"number": phone_number}).json()
+                    if r["status"] == "ok":
+                        update.message.reply_text("Успешное удаление пользователя")
+                    else:
+                        update.message.reply_text("Ошибка при удалении пользователя!\nОписание: "+r["description"])
 
 def main():
     obj = GetSettingsClass()
