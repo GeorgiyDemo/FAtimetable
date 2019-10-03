@@ -92,27 +92,34 @@ def check_send():
                 r_id2timetable.delete(k)
 
 
-            obj = FATokenClass(uconfig)
-            for number in r_number2group.keys():
+            fa_token = FATokenClass(uconfig)
+            keys = r_number2group.keys()
+            print(keys)
+            for number in keys:
                 # Получаем данные с таблиц 1,2 в виде number и group_id
                 group_name = r_number2group.get(number)
                 group_id = r_group2id.get(group_name)
 
                 #Если для этой группы еще нет расписания
-                if r_id2timetable.exists(group_id)== False:
+                if r_id2timetable.exists(group_id) == False:
 
                     #Получаем расписание
-                    time.sleep(uconfig["IOP_TIME_SLEEP"])
-                    fa = fa_api_module.TTClass(obj.user_token, group_id, uconfig)
-
+                    fa = fa_api_module.TTClass(fa_token.user_token, group_id, uconfig)
                     #Парсим расписание
                     obj = fa_json_module.JSONProcessingClass(group_name, fa.tt)
                     
+                    print("СГЕНЕРИРОВАЛИ РАСПИСАЛОВО",obj.outstring)
                     #Пишем в Redis
+    
                     r_id2timetable.set(group_id, obj.outstring)
+                    sms_content = obj.outstring
                 
-                #Берем данные с Redis
-                sms_content = r_id2timetable.get(group_id)
+                else:
+                    
+                    #Берем данные с Redis
+                    sms_content = r_id2timetable.get(group_id)
+                    print("БЕРЕМ ДАННЫЕ С REDIS ",sms_content)
+                
                 if sms_content != "None":
                     #Добавляем в FIFO
                     queue.enqueue('sender.SendSMSClass', number, sms_content, sender_config)
