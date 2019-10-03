@@ -1,7 +1,0 @@
-version: '3'
-services:
-
-  telegram-cli:
-      build: client/.
-      depends_on:
-        - server

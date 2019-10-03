@@ -4,3 +4,4 @@
 docker/yaml/settings.yml
 clients/redis_test.py
 clients/OUT_SET.yml
+docker/telegram-cli/settings.yml

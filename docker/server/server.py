@@ -41,15 +41,19 @@ class AddNumber(Resource):
         """
         number = request.form.get('number')
         group = request.form.get('group')
+        rewrite_flag = request.form.get('rewrite')
         if UtilClass.check_number(number) == False:
-            return {"status": "exception", "description": "number is not valid"}
+            return {"status": "exception", "description": "number is not valid", "exist" : 0}
         if UtilClass.check_group(group) == False:
-            return {"status": "exception", "description": "group is not valid"}
+            return {"status": "exception", "description": "group is not valid", "exist" : 0}
         try:
-            r_number2group.set(number, group)
-            return {"status": "ok"}
+            if r_number2group.exists(number) == True and rewrite_flag == None:
+                return {"status": "exception", "exist" : 1, "description": "Value already exist. POST field 'rewrite' with some value to rewrite the value"}
+            else:
+                r_number2group.set(number, group)
+                return {"status": "ok", "exist": 0 }
         except:
-            return {"status": "exception", "description": "can't set value to number2group table"}
+            return {"status": "exception", "description": "can't set value to number2group table", "exist" : 0}
 
 
 class RemoveNumber(Resource):
