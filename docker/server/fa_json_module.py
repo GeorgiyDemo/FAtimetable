@@ -5,9 +5,12 @@ class JSONProcessingClass(object):
 
     def __init__(self, group_name, tt):
 
-        self.group_name = group_name
-        self.tt = tt
-        self.json_decoder()
+        if tt != {}:
+            self.group_name = group_name
+            self.tt = tt
+            self.json_decoder()
+        else:
+            self.outstring = "None"
 
     def teacher_formater(self, t_string):
         teacher_list = t_string.split(" ")

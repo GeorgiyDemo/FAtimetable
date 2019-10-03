@@ -5,6 +5,9 @@
 import datetime
 import time
 
+import fa_api_module
+import fa_json_module
+
 import redis
 import requests
 import rq
@@ -56,12 +59,18 @@ class FATokenClass(object):
 
 r_number2group = redis.Redis(host='redis', port=6379, decode_responses=True, db=1)
 r_group2id = redis.Redis(host='redis', port=6379, decode_responses=True, db=2)
+r_id2timetable = redis.Redis(host='redis', port=6379, decode_responses=True, db=4)
 
 # Подключение для создания очереди в Redis с помощью python-rq
 queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://redis:6379/3'))
 
 s_obj = GetSettingsClass()
 uconfig = s_obj.config
+sender_config = {
+    "gsm_url" : uconfig["gsm_url"],
+    "gsm_password" : uconfig["gsm_password"],
+    "SMS_TIME_SLEEP" : uconfig["SMS_TIME_SLEEP"],
+}
 
 # В async проверять, какое время. Если время рассылать сообщения, то рассылаем сообщения
 def check_send():
@@ -76,16 +85,40 @@ def check_send():
         cur_hour = now_time.hour
         cur_minute = now_time.minute
 
-        #TODO ТУТ КАРОЧ С КОНФИГА БЕРЕМ ЗНАЧЕНИЯ
         if cur_hour == uconfig["time_send"][0] and cur_minute == uconfig["time_send"][1]:
+
+            #Обнуление таблицы №4 чтоб не присылалось вчерашнее расписание
+            for k in r_id2timetable.keys():
+                r_id2timetable.delete(k)
+
+
             obj = FATokenClass(uconfig)
-            keys = r_number2group.keys()
-            for number in keys:
+            for number in r_number2group.keys():
                 # Получаем данные с таблиц 1,2 в виде number и group_id
                 group_name = r_number2group.get(number)
                 group_id = r_group2id.get(group_name)
-                # Заносим в 3 таблицу
-                queue.enqueue('sender.MainProcessingClass', number, group_id, group_name, obj.user_token, uconfig)
+
+                #Если для этой группы еще нет расписания
+                if r_id2timetable.exists(group_id)== False:
+                    #TODO НОВЫЙ ПАРАМЕТР TIME SLEEP
+                    time.sleep(15)
+
+                    #Получаем расписание
+                    fa = fa_api_module.TTClass(obj.user_token, group_id, uconfig)
+                    print("ПОЛУЧИЛИ ОТ fa_api_module ДАННЫЕ: ",fa.tt)
+
+                    #Парсим расписание
+                    obj = fa_json_module.JSONProcessingClass(group_name, fa.tt)
+                    
+                    #Пишем в Redis
+                    r_id2timetable.set(group_id, obj.outstring)
+                
+                #Берем данные с Redis
+                sms_content = r_id2timetable.get(group_id)
+                if sms_content != "None":
+                    #Добавляем в FIFO
+                    queue.enqueue('sender.SendSMSClass', number, sms_content, sender_config)
+            
             time.sleep(uconfig["ASYNC_PROC_TIME_SLEEP"])
 
         time.sleep(2)
