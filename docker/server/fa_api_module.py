@@ -16,7 +16,6 @@ class TTClass(object):
         """
         Метод для получения расписания в виде текста
         """
-        print("get_text_tt headers:", self.config["headers"])
         session = self.session_token
         today = datetime.datetime.today() + datetime.timedelta(hours=0)
 

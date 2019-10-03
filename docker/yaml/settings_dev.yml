@@ -1,5 +1,6 @@
 ASYNC_PROC_TIME_SLEEP: 65      #Время ожидания после добавления данных в очередь FIFO. Меньше 65 не ставить
 SMS_TIME_SLEEP: 30             #Время ожидания между SMS
+IOP_TIME_SLEEP: 10             #Время ожидания между запросами к ИОП
 gsm_password: CHECK         #Пароль для взаимодействия с GSM
 gsm_url: CHECK    #URL для отправки SMS на GSM
 headers: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like

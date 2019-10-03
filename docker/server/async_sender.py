@@ -100,12 +100,10 @@ def check_send():
 
                 #Если для этой группы еще нет расписания
                 if r_id2timetable.exists(group_id)== False:
-                    #TODO НОВЫЙ ПАРАМЕТР TIME SLEEP
-                    time.sleep(15)
 
                     #Получаем расписание
+                    time.sleep(uconfig["IOP_TIME_SLEEP"])
                     fa = fa_api_module.TTClass(obj.user_token, group_id, uconfig)
-                    print("ПОЛУЧИЛИ ОТ fa_api_module ДАННЫЕ: ",fa.tt)
 
                     #Парсим расписание
                     obj = fa_json_module.JSONProcessingClass(group_name, fa.tt)
