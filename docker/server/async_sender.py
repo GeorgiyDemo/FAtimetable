@@ -94,7 +94,8 @@ def check_send():
 
             fa_token = FATokenClass(uconfig)
             keys = r_number2group.keys()
-            print(keys)
+            
+            #TODO ТУТ МОЖНО СДЕЛАТЬ ОСНОВУ ДЛЯ СТАТИСТИКИ
             for number in keys:
                 # Получаем данные с таблиц 1,2 в виде number и group_id
                 group_name = r_number2group.get(number)
@@ -104,13 +105,11 @@ def check_send():
                 if r_id2timetable.exists(group_id) == False:
 
                     #Получаем расписание
+                    time.sleep(uconfig["IOP_TIME_SLEEP"])
                     fa = fa_api_module.TTClass(fa_token.user_token, group_id, uconfig)
                     #Парсим расписание
                     obj = fa_json_module.JSONProcessingClass(group_name, fa.tt)
-                    
-                    print("СГЕНЕРИРОВАЛИ РАСПИСАЛОВО",obj.outstring)
                     #Пишем в Redis
-    
                     r_id2timetable.set(group_id, obj.outstring)
                     sms_content = obj.outstring
                 
@@ -118,7 +117,6 @@ def check_send():
                     
                     #Берем данные с Redis
                     sms_content = r_id2timetable.get(group_id)
-                    print("БЕРЕМ ДАННЫЕ С REDIS ",sms_content)
                 
                 if sms_content != "None":
                     #Добавляем в FIFO
