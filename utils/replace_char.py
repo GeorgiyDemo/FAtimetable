@@ -14,19 +14,22 @@ d = {
 
 string_dict = {}
 all_symbols = np.array([])
-string = "4. Алгоритмы и структуры данных .. 17:20-18:50 Петросов Д.А., 508(кк)"
+string = "1. Физические явления и процессы в об.. 11:50-13:20\nНизамов А.Ж."
 
 all_combs_list = []
 for i in range(len(string)):
     if string[i] in d:
         all_symbols = np.append(all_symbols, i)
 
+i = 0 
 for p in multiset_permutations(all_symbols.astype(int)):
-    buf_string = list(string)
-    for element in p:
-        buf_string[element] = d[buf_string[element]]
-        string_dict["".join(buf_string)] = None
+    i += 1
+    #buf_string = list(string)
+    #for element in p:
+    #    buf_string[element] = d[buf_string[element]]
+    #    string_dict["".join(buf_string)] = None
 
-print(len(string_dict))
+print(i)
+#print(len(string_dict))
 #for key in string_dict:
 #   print(key)
