@@ -1,6 +1,5 @@
-from itertools import permutations
-# Использовать numpy
-### https://stackoverflow.com/questions/41210142/get-all-permutations-of-a-numpy-array
+from sympy.utilities.iterables import multiset_permutations
+import numpy as np
 
 d = {
     "е": "e",
@@ -13,24 +12,21 @@ d = {
     "С" : "C",
 }
 
-string_list = []
-chars_dict = {}
-all_symbols = []
+string_dict = {}
+all_symbols = np.array([])
 string = "4. Алгоритмы и структуры данных .. 17:20-18:50 Петросов Д.А., 508(кк)"
 
 all_combs_list = []
 for i in range(len(string)):
     if string[i] in d:
-        all_symbols.append([string[i],i])
+        all_symbols = np.append(all_symbols,i)
 
-print(all_symbols)
-for e in permutations(all_symbols, len(all_symbols)):
+for p in multiset_permutations(all_symbols.astype(int)):
     buf_string = list(string)
-    for element in e:
-        buf_string[element[1]] = d[element[0]]
-        string_list.append("".join(buf_string))
+    for element in p:
+        buf_string[element] = d[buf_string[element]]
+        string_dict["".join(buf_string)] = None
 
-string_list = list(set(string_list))
-print(len(string_list))
-#print(string_list)
-
+print(string_dict)
+#for key in string_dict:
+#   print(key)
