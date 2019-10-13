@@ -1,10 +1,9 @@
 from sympy.utilities.iterables import multiset_permutations
 import numpy as np
 
-a = np.array([0, 1, 0, 2])
-listm = []
+a = np.array([3, 6, 15, 26, 48, 51, 52, 53, 58])
+string_list = []
+i = 0
 for p in multiset_permutations(a):
-    listm.append(p)
-
-print(len(listm))
-print(listm)
+    #string_list.append(p)
+    #print(p)
