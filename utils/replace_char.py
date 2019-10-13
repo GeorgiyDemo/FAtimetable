@@ -19,7 +19,7 @@ string = "4. Алгоритмы и структуры данных .. 17:20-18:5
 all_combs_list = []
 for i in range(len(string)):
     if string[i] in d:
-        all_symbols = np.append(all_symbols,i)
+        all_symbols = np.append(all_symbols, i)
 
 for p in multiset_permutations(all_symbols.astype(int)):
     buf_string = list(string)
@@ -27,6 +27,6 @@ for p in multiset_permutations(all_symbols.astype(int)):
         buf_string[element] = d[buf_string[element]]
         string_dict["".join(buf_string)] = None
 
-print(string_dict)
+print(len(string_dict))
 #for key in string_dict:
 #   print(key)

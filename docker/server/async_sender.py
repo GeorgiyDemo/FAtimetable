@@ -7,6 +7,7 @@ import time
 
 import fa_api_module
 import fa_json_module
+import sms_format_module
 
 import redis
 import requests
@@ -110,6 +111,8 @@ def check_send():
                     #Парсим расписание
                     obj = fa_json_module.JSONProcessingClass(group_name, fa.tt)
                     #Пишем в Redis
+                    #TODO РАЗНЫЕ СООБЩЕНИЯ
+
                     r_id2timetable.set(group_id, obj.outstring)
                     sms_content = obj.outstring
                 

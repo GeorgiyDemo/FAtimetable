@@ -17,6 +17,7 @@ class SendSMSClass(object):
         self.config = config
         self.send_sms()
 
+    #TODO SENDER ПЕРЕДЕЛАТЬ ОТПРАВКУ SMS
     def send_sms(self):
         print("Отправляем сообщение на " + self.number+"..")
         sms_list = self.sms.split("\a")
