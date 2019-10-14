@@ -20,12 +20,10 @@ class SendSMSClass(object):
     #TODO SENDER ПЕРЕДЕЛАТЬ ОТПРАВКУ SMS
     def send_sms(self):
         print("Отправляем сообщение на " + self.number+"..")
-        sms_list = self.sms.split("\a")
-        sms_list.pop(-1)
-        for sms in sms_list:
+        for s in self.sms:
             try:
                 requests.get(
-                "http://"+self.config["gsm_url"]+"/SendSMS/user=&password="+self.config["gsm_password"]+"&phoneNumber=" + self.number + "&msg=" + sms)
+                "http://"+self.config["gsm_url"]+"/SendSMS/user=&password="+self.config["gsm_password"]+"&phoneNumber=" + self.number + "&msg=" + s)
             except:
                 raise Exception('GSM server', 'GSM server exception')
             time.sleep(1)

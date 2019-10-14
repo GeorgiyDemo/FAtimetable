@@ -14,6 +14,37 @@ import requests
 import rq
 import yaml
 
+#TODO Если нет индекса и  replace_flag True, то можем обрпатиться к индексу сначала
+class GetListSMSClass(object):
+
+    """
+    Метод для получения уникальных значений по индексу
+    
+    - Принимает глобальный list от sms_format_module
+    - Отдаёт локальный list с уникальными значениями
+    """
+
+    def __init__(self, input_list):
+        self.input_list = input_list
+        self.getter()
+        self.result = []
+        self.updated_dict = {}
+
+    def getter(self):
+        sms_formater = self.input_list
+        sms_list = []
+        buf_index = sms_formater["counter"]
+        for key in sms_formater["sms_list"]:
+            sms_element = sms_formater["sms_list"][key]["data"][buf_index]
+            sms_list.append(sms_element)
+        
+        self.result = sms_list
+
+        self.updated_dict = {
+            "counter": buf_index + 1,
+            "sms_list" : sms_formater["sms_list"]
+        }
+
 class GetSettingsClass(object):
     """
     Класс для чтения настроек с yaml
@@ -110,16 +141,33 @@ def check_send():
                     fa = fa_api_module.TTClass(fa_token.user_token, group_id, uconfig)
                     #Парсим расписание
                     obj = fa_json_module.JSONProcessingClass(group_name, fa.tt)
-                    #Пишем в Redis
-                    #TODO РАЗНЫЕ СООБЩЕНИЯ
 
-                    r_id2timetable.set(group_id, obj.outstring)
-                    sms_content = obj.outstring
+                    #Все возможные комбинации сообщений
+                    sms_formater = sms_format_module.SMSFormaterClass(obj.outstring)
+                    
+                    #Пишем в Redis
+                    r_id2timetable.set(group_id, sms_formater.outd)
+                    
+                    #Получаем уникальные sms
+                    sms_list_obj = GetListSMSClass(sms_formater.outd)
+
+                    #Пишем в Redis обновлённый индекс
+                    r_id2timetable.set(group_id, sms_list_obj.updated_dict)
+                    
+                    sms_content = sms_list_obj.result
                 
                 else:
                     
                     #Берем данные с Redis
-                    sms_content = r_id2timetable.get(group_id)
+                    outd = r_id2timetable.get(group_id)
+                    #Получаем уникальные sms
+                    sms_list_obj = GetListSMSClass(outd)
+
+                    #Пишем в Redis обновлённый индекс
+                    r_id2timetable.set(group_id, sms_list_obj.updated_dict)
+                    
+                    sms_content = sms_list_obj.result
+
                 
                 if sms_content != "None":
                     #Добавляем в FIFO
