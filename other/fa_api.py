@@ -61,7 +61,6 @@ class FaClass(object):
         r = requests.get(self.url+"mCore/UserImg?Token="+self.token+"&Id="+self.id).content
         return r
     
-    #TODO Нет прав доступа к указанной группе
     def get_tutor_program(self):
         """
         Получение информации о профиле подготовки
@@ -70,7 +69,6 @@ class FaClass(object):
         r = requests.post(self.url+"mGosvpoGroup/Info", data=raw_data, headers=self.headers).json()
         return r
 
-    #TODO исправить ссылку
     def get_full_tutor_program(self, stage):
         """
         Получение учебного плана по семестрам 

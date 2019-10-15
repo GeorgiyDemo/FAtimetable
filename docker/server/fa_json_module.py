@@ -32,7 +32,7 @@ class JSONProcessingClass(object):
                     new_teacher = self.teacher_formater(tt[day][i]["teachers_name"][0])
                 else:
                     new_teacher = ""
-                # TODO Если аудиторий несколько, то учителя не пишем!
+                # Если аудиторий несколько, то учителя не пишем
                 aud = tt[day][i]["audience"].split(" ")
                 if len(aud) > 1:
                     new_teacher = ""

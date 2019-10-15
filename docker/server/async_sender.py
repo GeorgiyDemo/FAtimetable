@@ -47,7 +47,6 @@ class GetListSMSClass(object):
                 sms_element = sms_formater["sms_list"][key]["data"][0]
         
             sms_formater["sms_list"][key]["counter"] += 1
-
             sms_list.append(sms_element)
             
         self.result = sms_list
