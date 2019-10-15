@@ -142,7 +142,6 @@ def check_send():
             for k in r_id2timetable.keys():
                 r_id2timetable.delete(k)
 
-            #TODO ДАВА НАЧАЛА РАССЫЛКИ
             r_stats.set("date_begin", get_date_now())  
             r_stats.set("date_end","-")
             r_stats.set("sms_send",0)
@@ -152,8 +151,6 @@ def check_send():
             fa_token = FATokenClass(uconfig)
             keys = r_number2group.keys()
             
-            #TODO ТУТ МОЖНО СДЕЛАТЬ ОСНОВУ ДЛЯ СТАТИСТИКИ
-            #Флаг для делея по кол-ву смс
             USERS_COUNTER = 0
             for number in keys:
 
@@ -205,5 +202,6 @@ def check_send():
                     USERS_COUNTER = 0
             
             r_stats.set("date_end", get_date_now())
+            #TODO Time.sleep на минуту на всяк случай
 
         time.sleep(2)
