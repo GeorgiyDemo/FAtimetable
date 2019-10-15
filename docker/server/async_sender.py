@@ -14,6 +14,7 @@ import requests
 import rq
 import yaml
 
+
 class GetListSMSClass(object):
 
     """
@@ -24,7 +25,7 @@ class GetListSMSClass(object):
     """
 
     def __init__(self, input_list):
-        
+
         if input_list == "None":
             self.result = "None"
             self.updated_dict = "None"
@@ -138,12 +139,15 @@ def check_send():
             for k in r_id2timetable.keys():
                 r_id2timetable.delete(k)
 
-
+            #TODO Может сломаться случайно т.к. у токена ограниченное время действия
             fa_token = FATokenClass(uconfig)
             keys = r_number2group.keys()
             
             #TODO ТУТ МОЖНО СДЕЛАТЬ ОСНОВУ ДЛЯ СТАТИСТИКИ
+            #Флаг для делея по кол-ву смс
+            SMS_COUNTER = 0
             for number in keys:
+
                 # Получаем данные с таблиц 1,2 в виде number и group_id
                 group_name = r_number2group.get(number)
                 group_id = r_group2id.get(group_name)
@@ -187,7 +191,11 @@ def check_send():
                 if sms_content != "None":
                     #Добавляем в FIFO
                     queue.enqueue('sender.SendSMSClass', number, sms_content, sender_config)
-            
-            time.sleep(uconfig["ASYNC_PROC_TIME_SLEEP"])
+                    SMS_COUNTER += 1
+                
+                if SMS_COUNTER == 6:
+                    time.sleep(uconfig["30SMS_TIME_LIMIT"])
+                    SMS_COUNTER = 0
+
 
         time.sleep(2)
