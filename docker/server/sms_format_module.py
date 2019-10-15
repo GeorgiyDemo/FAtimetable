@@ -8,9 +8,6 @@ import numpy as np
 
 class SMSFormaterClass(object):
     def __init__(self, sms_string):
-        self.sms_string = sms_string
-        self.outd = {}
-
         self.replaced = {
             "е": "e",
             "о": "o", 
@@ -22,7 +19,12 @@ class SMSFormaterClass(object):
             "С" : "C",
         }
 
-        self.spliter()
+        if sms_string != "None":
+            self.sms_string = sms_string
+            self.outd = {}
+            self.spliter()
+        else:
+            self.outd = "None"
     
     def spliter(self):
         """

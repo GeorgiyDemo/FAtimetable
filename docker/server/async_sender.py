@@ -24,10 +24,15 @@ class GetListSMSClass(object):
     """
 
     def __init__(self, input_list):
-        self.input_list = input_list
-        self.getter()
-        self.result = []
-        self.updated_dict = {}
+        
+        if input_list == "None":
+            self.result = "None"
+            self.updated_dict = "None"
+        else:
+            self.input_list = input_list
+            self.getter()
+            self.result = []
+            self.updated_dict = {}
 
     def getter(self):
         sms_formater = self.input_list
