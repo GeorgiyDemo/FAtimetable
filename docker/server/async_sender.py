@@ -14,7 +14,6 @@ import requests
 import rq
 import yaml
 
-#TODO Если нет индекса и  replace_flag True, то можем обрпатиться к индексу сначала
 class GetListSMSClass(object):
 
     """
@@ -35,7 +34,12 @@ class GetListSMSClass(object):
         sms_list = []
         buf_index = sms_formater["counter"]
         for key in sms_formater["sms_list"]:
-            sms_element = sms_formater["sms_list"][key]["data"][buf_index]
+            try:
+                sms_element = sms_formater["sms_list"][key]["data"][buf_index]
+            except:
+                #TODO Ciunter для каждого элемента 
+                #TODO Если нет индекса и  replace_flag True, то можем обрпатиться к индексу сначала
+
             sms_list.append(sms_element)
         
         self.result = sms_list
