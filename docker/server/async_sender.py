@@ -102,6 +102,7 @@ class FATokenClass(object):
 r_number2group = redis.Redis(host='redis', port=6379, decode_responses=True, db=1)
 r_group2id = redis.Redis(host='redis', port=6379, decode_responses=True, db=2)
 r_id2timetable = redis.Redis(host='redis', port=6379, decode_responses=True, db=4)
+r_stats = redis.Redis(host='redis', port=6379, decode_responses=True, db=5)
 
 # Подключение для создания очереди в Redis с помощью python-rq
 queue = rq.Queue('sender-tasks', connection=redis.Redis.from_url('redis://redis:6379/3'))
@@ -129,9 +130,15 @@ def check_send():
 
         if cur_hour == uconfig["time_send"][0] and cur_minute == uconfig["time_send"][1]:
 
-            #Обнуление таблицы №4 чтоб не присылалось вчерашнее расписание
+            #Обнуление таблицы №4 чтоб не присылалось вчерашнее расписание и обнуление всех данных статистики
             for k in r_id2timetable.keys():
                 r_id2timetable.delete(k)
+
+            #TODO ДАВА НАЧАЛА РАССЫЛКИ
+            r_stats.set("date_begin",)  
+            r_stats.set("date_end","-")
+            r_stats.set("sms_send",0)
+            r_stats.set("sms_errors",0)
 
             #TODO Может сломаться случайно т.к. у токена ограниченное время действия
             fa_token = FATokenClass(uconfig)
@@ -191,5 +198,5 @@ def check_send():
                 if USERS_COUNTER == 18:
                     time.sleep(uconfig["SMS_TIME_LIMIT"])
                     USERS_COUNTER = 0
-
+            r_stats.set("date_end","-")
         time.sleep(2)

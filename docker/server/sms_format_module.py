@@ -1,8 +1,6 @@
 """
 Модуль для замены символов в SMS-сообщениях (чтоб не банила система)
 """
-
-import json
 from sympy.utilities.iterables import multiset_permutations
 import numpy as np
 

@@ -12,6 +12,7 @@ from flask_restful import Resource, Api
 # Подключения к Redis для менеджмента данных
 r_number2group = redis.Redis(host='redis', port=6379, decode_responses=True, db=1)
 r_group2id = redis.Redis(host='redis', port=6379, decode_responses=True, db=2)
+r_stats = redis.Redis(host='redis', port=6379, decode_responses=True, db=5)
 
 app = Flask(__name__)
 api = Api(app)
@@ -89,15 +90,29 @@ class AddGroup(Resource):
         except:
             return {"status": "exception", "description": "can't set value to group2id table"}
 
-
-# TODO Статистика/статус сервисов и т.д.
 class Stats(Resource):
     def get(self):
         """
         Метод для получения статистики, ошибок,
         инфы и т д группы в БД
         """
-        return {"status": "ok", "containers": "VSYO NORMALNO"}
+        try:
+            all_users = len(r_number2group.keys())
+            all_sms = all_users*5
+            date_begin = r_stats.get("date_begin")
+            date_end = r_stats.get("date_end")
+            sms_send = r_stats.get("sms_send")
+            sms_errors = r_stats.get("sms_errors")
+        
+            return {
+                "status" : "ok",
+                "all_users" : str(all_users),
+                "all_sms" : str(all_sms),
+                "sms_send" : str(sms_send),
+                "sms_errors" : str(sms_errors),
+                }
+        except:
+            return {"status": "critical"}
 
 
 api.add_resource(AddNumber, '/add_number')
