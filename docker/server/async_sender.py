@@ -4,6 +4,7 @@
 
 import datetime
 import time
+import json
 
 import fa_api_module
 import fa_json_module
@@ -174,27 +175,23 @@ def check_send():
                     #Все возможные комбинации сообщений
                     sms_formater = sms_format_module.SMSFormaterClass(obj.outstring)
                     
-                    #Пишем в Redis
-                    r_id2timetable.set(group_id, sms_formater.outd)
-                    
                     #Получаем уникальные sms
                     sms_list_obj = GetListSMSClass(sms_formater.outd)
 
                     #Пишем в Redis обновлённый индекс
-                    r_id2timetable.set(group_id, sms_list_obj.updated_dict)
+                    r_id2timetable.set(group_id, json.dumps(sms_list_obj.updated_dict, ensure_ascii=True))
                     
                     sms_content = sms_list_obj.result
                 
                 else:
                     
                     #Берем данные с Redis
-                    outd = r_id2timetable.get(group_id)
+                    outd = json.loads(r_id2timetable.get(group_id))
                     #Получаем уникальные sms
                     sms_list_obj = GetListSMSClass(outd)
 
                     #Пишем в Redis обновлённый индекс
-                    r_id2timetable.set(group_id, sms_list_obj.updated_dict)
-                    
+                    r_id2timetable.set(group_id, json.dumps(sms_list_obj.updated_dict, ensure_ascii=True))
                     sms_content = sms_list_obj.result
 
                 
