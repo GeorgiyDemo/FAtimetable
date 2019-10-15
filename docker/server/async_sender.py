@@ -115,7 +115,16 @@ sender_config = {
     "SMS_TIME_SLEEP" : uconfig["SMS_TIME_SLEEP"],
 }
 
-# В async проверять, какое время. Если время рассылать сообщения, то рассылаем сообщения
+def get_date_now():
+    """
+    Метод для возврата текущей даты
+
+    Используется для таблицы статистики №5 в async check_send
+    """
+
+    now_time = datetime.datetime.now()
+    return now_time.strftime("%H:%M:%S %d/%m/%Y")
+
 def check_send():
     """
     Метод, проверяющий какое сейчас время
@@ -135,7 +144,7 @@ def check_send():
                 r_id2timetable.delete(k)
 
             #TODO ДАВА НАЧАЛА РАССЫЛКИ
-            r_stats.set("date_begin",)  
+            r_stats.set("date_begin", get_date_now())  
             r_stats.set("date_end","-")
             r_stats.set("sms_send",0)
             r_stats.set("sms_errors",0)
@@ -198,5 +207,7 @@ def check_send():
                 if USERS_COUNTER == 18:
                     time.sleep(uconfig["SMS_TIME_LIMIT"])
                     USERS_COUNTER = 0
-            r_stats.set("date_end","-")
+            
+            r_stats.set("date_end", get_date_now())
+
         time.sleep(2)

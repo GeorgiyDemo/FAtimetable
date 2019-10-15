@@ -96,23 +96,20 @@ class Stats(Resource):
         Метод для получения статистики, ошибок,
         инфы и т д группы в БД
         """
-        try:
-            all_users = len(r_number2group.keys())
-            all_sms = all_users*5
-            date_begin = r_stats.get("date_begin")
-            date_end = r_stats.get("date_end")
-            sms_send = r_stats.get("sms_send")
-            sms_errors = r_stats.get("sms_errors")
+        all_users = len(r_number2group.keys())
+        all_sms = all_users*5
+
+        redis_values_list = ["date_begin", "date_end", "sms_send", "sms_errors"]
         
-            return {
-                "status" : "ok",
-                "all_users" : str(all_users),
-                "all_sms" : str(all_sms),
-                "sms_send" : str(sms_send),
-                "sms_errors" : str(sms_errors),
-                }
-        except:
-            return {"status": "critical"}
+        d = {
+            "all_users" : str(all_users),
+            "all_sms" : str(all_sms),
+        }
+
+        for k in redis_values_list:
+            d[k] = r_stats.get(k)
+
+        return d
 
 
 api.add_resource(AddNumber, '/add_number')
