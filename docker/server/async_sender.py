@@ -33,8 +33,6 @@ class GetListSMSClass(object):
         else:
             self.input_list = input_list
             self.getter()
-            self.result = []
-            self.updated_dict = {}
 
     def getter(self):
         sms_formater = self.input_list
@@ -187,6 +185,7 @@ def check_send():
                     
                     #Берем данные с Redis
                     outd = json.loads(r_id2timetable.get(group_id))
+
                     #Получаем уникальные sms
                     sms_list_obj = GetListSMSClass(outd)
 
