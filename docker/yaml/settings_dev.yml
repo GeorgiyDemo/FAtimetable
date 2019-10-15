@@ -1,18 +1,18 @@
-ASYNC_PROC_TIME_SLEEP: 65      #Время ожидания после добавления данных в очередь FIFO. Меньше 65 не ставить
-SMS_TIME_SLEEP: 30             #Время ожидания между SMS
-IOP_TIME_SLEEP: 10             #Время ожидания между запросами к ИОП
-gsm_password: CHECK         #Пароль для взаимодействия с GSM
-gsm_url: CHECK    #URL для отправки SMS на GSM
-headers: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like
-  Gecko) Chrome/70.0.3538.102 Safari/537.36
-login: CHECK
-password: CHECK
-time_send:                     #Час и минута отправки SMS в tuple
-- 7                            #Час
-- 1                            #Минута
+#TODO Конфиг на кол-во смс
+SMS_TIME_LIMIT: 1200    #Время делея после отправки 18 смс (чтоб система не забанила нафиг)
+SMS_TIME_SLEEP: 5       #Время ожидания между SMS
+IOP_TIME_SLEEP: 10      #Время ожидания между запросами к ИОП
+gsm_password: CHECK     #Пароль для взаимодействия с GSM
+gsm_url: CHECK          #URL для отправки SMS на GSM
+headers:                #Кастомные юзерагенты
+  User-Agent: CHECK
+login: CHECK            #Логин на ИОП
+password: CHECK         #Пароль на ИОП
+time_send:              #Время начала рассылки оповещений 
+- 18
+- 19
 url: CHECK
 telegram_token: CHECK
 telegram_admins:
 - 111111
 - 222222
-
