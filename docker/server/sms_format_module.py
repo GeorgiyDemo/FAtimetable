@@ -23,11 +23,6 @@ class SMSFormaterClass(object):
         }
 
         self.spliter()
-        #print(self.outd["sms_list"]["counter"])
-        #for e in self.outd["sms_list"]:
-        #    print(self.outd["sms_list"][e])
-
-        #print(json.dumps(self.outd,ensure_ascii=False))
     
     def spliter(self):
         """
@@ -61,11 +56,9 @@ class SMSFormaterClass(object):
                 d_prev = d
             
             repeat_flag = True if counter < 40 else False
-            #print(counter)
-            #print(repeat_flag)
-            outd[i] = {"data" : list(d.keys()), "repeat_flag" : repeat_flag, "gen_info":{ "difficulty" : break_comb, "unic_val" : counter}}
+            outd[i] = {"data" : list(d.keys()), "counter": 0, "repeat_flag" : repeat_flag, "gen_info":{ "difficulty" : break_comb, "unic_val" : counter}}
         
-        self.outd = {"counter": 0, "sms_list": outd}
+        self.outd = {"sms_list": outd}
             
 
     def replace_chars(self, input_str, n):
@@ -88,15 +81,8 @@ class SMSFormaterClass(object):
         
         return string_dict, len(string_dict)
 
+
 if __name__ == "__main__":
     s = "Расписание группы ИБ19-2 09.10.2019\a1. Физические явления и процессы в об.. 11:50-13:20\nНизамов А.Ж., 303\a2. Физические явления и процессы в обл.. 14:00-15:30\nЕгоров Е.В., 708\a3. Иностранный язык (Иностранный язык) 15:40-17:10\n 511, 606\a"
-    sms_formater =  SMSFormaterClass(s)
-
-
-    sms_list = []
-    buf_index = sms_formater.outd["counter"]
-    for key in sms_formater.outd["sms_list"]:
-        sms_element = sms_formater.outd["sms_list"][key]["data"][buf_index]
-        sms_list.append(sms_element)
-    
-    print(sms_list)
+    obj = SMSFormaterClass(s)
+    sms_formater = obj.outd

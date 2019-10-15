@@ -32,21 +32,27 @@ class GetListSMSClass(object):
     def getter(self):
         sms_formater = self.input_list
         sms_list = []
-        buf_index = sms_formater["counter"]
         for key in sms_formater["sms_list"]:
             try:
-                sms_element = sms_formater["sms_list"][key]["data"][buf_index]
+                sms_index = sms_formater["sms_list"][key]["counter"]
+                print(sms_index)
+                print(sms_formater["sms_list"][key]["repeat_flag"])
+                sms_element = sms_formater["sms_list"][key]["data"][sms_index]
             except:
-                #TODO Ciunter для каждого элемента 
-                #TODO Если нет индекса и  replace_flag True, то можем обрпатиться к индексу сначала
+                if sms_formater["sms_list"][key]["repeat_flag"] == True:
+                    sms_formater["sms_list"][key]["counter"] = 0
+                    sms_element = sms_formater["sms_list"][key]["data"][0]
+                else:
+                    raise IndexError("Вышли за пределы индекса, но флаг repeat_flag = False!")
+        
+            sms_formater["sms_list"][key]["counter"] += 1
 
             sms_list.append(sms_element)
-        
+            
         self.result = sms_list
 
         self.updated_dict = {
-            "counter": buf_index + 1,
-            "sms_list" : sms_formater["sms_list"]
+            "sms_list" : sms_formater["sms_list"],
         }
 
 class GetSettingsClass(object):
