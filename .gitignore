@@ -4,3 +4,4 @@
 docker/yaml/settings.yml
 utils/redis_test.py
 utils/OUT_SET.yml
+*.aof

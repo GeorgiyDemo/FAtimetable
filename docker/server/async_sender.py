@@ -193,9 +193,9 @@ def check_send():
                     queue.enqueue('sender.SendSMSClass', number, sms_content, sender_config)
                     USERS_COUNTER += 1
                 
-                if USERS_COUNTER == 6:
-                    time.sleep(uconfig["30SMS_TIME_LIMIT"])
+                #TODO В конфиг
+                if USERS_COUNTER == 18:
+                    time.sleep(uconfig["SMS_TIME_LIMIT"])
                     USERS_COUNTER = 0
-
 
         time.sleep(2)
