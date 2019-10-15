@@ -41,15 +41,10 @@ class GetListSMSClass(object):
         for key in sms_formater["sms_list"]:
             try:
                 sms_index = sms_formater["sms_list"][key]["counter"]
-                print(sms_index)
-                print(sms_formater["sms_list"][key]["repeat_flag"])
                 sms_element = sms_formater["sms_list"][key]["data"][sms_index]
             except:
-                if sms_formater["sms_list"][key]["repeat_flag"] == True:
-                    sms_formater["sms_list"][key]["counter"] = 0
-                    sms_element = sms_formater["sms_list"][key]["data"][0]
-                else:
-                    raise IndexError("Вышли за пределы индекса, но флаг repeat_flag = False!")
+                sms_formater["sms_list"][key]["counter"] = 0
+                sms_element = sms_formater["sms_list"][key]["data"][0]
         
             sms_formater["sms_list"][key]["counter"] += 1
 

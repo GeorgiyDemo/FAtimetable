@@ -58,7 +58,7 @@ class SMSFormaterClass(object):
                 d_prev = d
             
             repeat_flag = True if counter < 40 else False
-            outd[i] = {"data" : list(d.keys()), "counter": 0, "repeat_flag" : repeat_flag, "gen_info":{ "difficulty" : break_comb, "unic_val" : counter}}
+            outd[i] = {"data" : list(d.keys()), "counter": 0, "gen_info":{ "difficulty" : break_comb, "unic_val" : counter}}
         
         self.outd = {"sms_list": outd}
             
