@@ -145,7 +145,7 @@ def check_send():
             
             #TODO ТУТ МОЖНО СДЕЛАТЬ ОСНОВУ ДЛЯ СТАТИСТИКИ
             #Флаг для делея по кол-ву смс
-            SMS_COUNTER = 0
+            USERS_COUNTER = 0
             for number in keys:
 
                 # Получаем данные с таблиц 1,2 в виде number и group_id
@@ -191,11 +191,11 @@ def check_send():
                 if sms_content != "None":
                     #Добавляем в FIFO
                     queue.enqueue('sender.SendSMSClass', number, sms_content, sender_config)
-                    SMS_COUNTER += 1
+                    USERS_COUNTER += 1
                 
-                if SMS_COUNTER == 6:
+                if USERS_COUNTER == 6:
                     time.sleep(uconfig["30SMS_TIME_LIMIT"])
-                    SMS_COUNTER = 0
+                    USERS_COUNTER = 0
 
 
         time.sleep(2)
