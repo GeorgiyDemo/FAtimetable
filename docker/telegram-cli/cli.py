@@ -7,7 +7,7 @@ import time
 import yaml
 from telegram.error import NetworkError, Unauthorized
 
-IP_ADDR = "http://40.117.90.200:5000"
+IP_ADDR = "server:5000"
 
 
 class GetSettingsClass(object):
@@ -81,10 +81,10 @@ class TelegramCli(object):
                 r = requests.get("http://" + IP_ADDR + "/stats").json()
                 text_string = "Всего пользователей в базе: " + r[
                     "all_users"] + "\nМаксимальное количество сообщений: " + r[
-                                  "all_sms"] + "\nПоследняя рассылка:\nSMS отправлено: " + r[
-                                  "sms_send"] + "\nОшибок отправки: " + r["sms_errors"] + "\nДата/время начала: " + r[
-                                  "date_begin"] + "\nДата/время окончания: " + r["date_end"]
-                update.message.reply_text(text_string, parse_mode=p_mode)
+                                  "all_sms"] + "\n\nПоследняя рассылка:\nSMS отправлено: " + r[
+                                  "sms_send"] + "\nОшибок отправки: " + r["sms_errors"] + "\nВремя/дата начала: " + r[
+                                  "date_begin"] + "\nВремя/дата окончания: " + r["date_end"]
+                update.message.reply_text(text_string)
 
 
             elif update.message.text.split(" ")[0] == "/add" and self.check_admin(tg_userid) == True:
