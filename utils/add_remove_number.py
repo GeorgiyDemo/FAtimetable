@@ -1,5 +1,5 @@
 import requests
-IP_ADDR = "127.0.0.1:5000"
+IP_ADDR = "40.117.90.200:5000"
 
 class MainClass(object):
     def __init__(self, flag, number, group):
@@ -11,7 +11,6 @@ class MainClass(object):
         self.number = number
         self.group = group
         choose_dic[flag]()
-        # self.delete_number()
 
     def add_number(self):
         print("[Добавление пользователя в систему]")
